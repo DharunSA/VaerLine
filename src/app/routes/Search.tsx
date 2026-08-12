@@ -5,6 +5,8 @@ import SearchBar from '../../components/search/SearchBar';
 import SearchResultCard from '../../components/search/SearchResultCard';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useAuthStore } from '../../stores/authStore';
+import { getViewerPersonId } from '../../lib/viewerHelper';
 import { computeRelationship } from '../../engine/relationshipLabel';
 import { searchPeople } from '../../lib/fuzzySearch';
 
@@ -22,6 +24,7 @@ export default function Search() {
   const openDrawer = useUIStore(s => s.openMemberDrawer);
   const focusPerson = useUIStore(s => s.focusPerson);
   const setSearchQuery = useUIStore(s => s.setSearchQuery);
+  const user = useAuthStore(s => s.user);
   const navigate = useNavigate();
 
   const peopleList = Object.values(people);
@@ -34,9 +37,8 @@ export default function Search() {
   }, [setSearchQuery]);
 
   const viewerPersonId = useMemo(() => {
-    const keys = Object.keys(people);
-    return keys.find(k => people[k].bio?.includes("That's me!")) ?? keys[0];
-  }, [people]);
+    return getViewerPersonId(people, user);
+  }, [people, user]);
 
   const results = useMemo(() => {
     const searched = query

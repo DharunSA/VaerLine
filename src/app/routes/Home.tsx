@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Users, Trophy, Sparkles, TrendingUp, Cake, ArrowRight, GitBranch } from 'lucide-react';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useAuthStore } from '../../stores/authStore';
+import { getViewerPersonId } from '../../lib/viewerHelper';
 import { computeRelationship } from '../../engine/relationshipLabel';
 import SearchBar from '../../components/search/SearchBar';
 import SearchResultCard from '../../components/search/SearchResultCard';
@@ -19,15 +21,15 @@ export default function Home() {
   const openDrawer = useUIStore(s => s.openMemberDrawer);
   const focusPerson = useUIStore(s => s.focusPerson);
   const searchQuery = useUIStore(s => s.searchQuery);
+  const user = useAuthStore(s => s.user);
   const navigate = useNavigate();
 
   const peopleList = Object.values(people);
 
-  // Viewer (me) — find the person marked as self
+  // Viewer (me) — match logged-in user profile or fall back to bio self
   const viewerPersonId = useMemo(() => {
-    const keys = Object.keys(people);
-    return keys.find(k => people[k].bio?.includes("That's me!")) ?? keys[0];
-  }, [people]);
+    return getViewerPersonId(people, user);
+  }, [people, user]);
 
   // ── Stats ─────────────────────────────────────────────────────────────────
   const stats = useMemo(() => {

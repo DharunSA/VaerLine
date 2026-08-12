@@ -1,33 +1,39 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { Home as HomeIcon, TreePine, Search, Plus, Sparkles } from 'lucide-react';
+import { Home as HomeIcon, TreePine, Search, Plus, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Home from './routes/Home';
 import Tree from './routes/Tree';
 import SearchPage from './routes/Search';
 import Person from './routes/Person';
+import Forum from './routes/Forum';
+import ResetPassword from './routes/ResetPassword';
 import AddMemberModal from '../components/member/AddMemberModal';
 import MemberDrawer from '../components/member/MemberDrawer';
 import ToastContainer from '../components/ui/ToastContainer';
-
+import AuthModal from '../components/auth/AuthModal';
+import UserMenu from '../components/auth/UserMenu';
 import { usePeopleStore } from '../stores/peopleStore';
 import { useUIStore } from '../stores/uiStore';
+import { useAuthStore } from '../stores/authStore';
+import { useForumStore } from '../stores/forumStore';
 
 import '../styles/globals.css';
 
 function AppLayout() {
-  const seedDemoData = usePeopleStore(s => s.seedDemoData);
-  const treeId = usePeopleStore(s => s.treeId);
+  const initializeTree = usePeopleStore(s => s.initializeTree);
   const openAddModal = useUIStore(s => s.openAddMemberModal);
+  const initializeAuth = useAuthStore(s => s.initializeAuth);
+  const fetchPosts = useForumStore(s => s.fetchPosts);
   const location = useLocation();
 
-  // Seed demo data on first load
+  // Initialize live Supabase Auth, Cloud Tree, and Forum on first load
   useEffect(() => {
-    if (!treeId) {
-      seedDemoData();
-    }
-  }, [treeId, seedDemoData]);
+    initializeAuth();
+    initializeTree();
+    fetchPosts();
+  }, [initializeAuth, initializeTree, fetchPosts]);
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: 'var(--color-canvas)' }}>
@@ -70,6 +76,7 @@ function AppLayout() {
             { to: '/', icon: HomeIcon, label: 'Home' },
             { to: '/tree', icon: TreePine, label: 'Family Tree' },
             { to: '/search', icon: Search, label: 'Search & Kinship' },
+            { to: '/forum', icon: MessageSquare, label: 'Discussions & Queries' },
           ].map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
@@ -105,21 +112,8 @@ function AppLayout() {
           </button>
         </div>
 
-        {/* Demo Mode Badge */}
-        <div
-          style={{
-            padding: '12px 16px 16px',
-            borderTop: '1px solid var(--surface-2)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <Sparkles size={14} style={{ color: 'var(--color-amber-glow)', flexShrink: 0 }} />
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.3 }}>
-            Demo Mode — Sharma Family
-          </div>
-        </div>
+        {/* User Account / Profile Menu */}
+        <UserMenu />
       </nav>
 
       {/* Main Content View */}
@@ -169,6 +163,20 @@ function AppLayout() {
               }
             />
             <Route
+              path="/forum"
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  style={{ height: '100%', overflowY: 'auto' }}
+                >
+                  <Forum />
+                </motion.div>
+              }
+            />
+            <Route
               path="/person/:personId"
               element={
                 <motion.div
@@ -182,6 +190,20 @@ function AppLayout() {
                 </motion.div>
               }
             />
+            <Route
+              path="/reset-password"
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  style={{ height: '100%' }}
+                >
+                  <ResetPassword />
+                </motion.div>
+              }
+            />
           </Routes>
         </AnimatePresence>
 
@@ -189,6 +211,7 @@ function AppLayout() {
         <AddMemberModal />
         <MemberDrawer />
         <ToastContainer />
+        <AuthModal />
       </main>
     </div>
   );
