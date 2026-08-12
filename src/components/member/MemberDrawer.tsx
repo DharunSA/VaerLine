@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useAuthStore } from '../../stores/authStore';
+import { getViewerPersonId } from '../../lib/viewerHelper';
 import { computeRelationship } from '../../engine/relationshipLabel';
 import RelationshipBadge from '../search/RelationshipBadge';
 import RelationshipNarrator from '../ai/RelationshipNarrator';
@@ -37,6 +39,7 @@ export default function MemberDrawer() {
   const addRelationship = usePeopleStore(s => s.addRelationship);
   const removeRelationship = usePeopleStore(s => s.removeRelationship);
   const selectPerson = usePeopleStore(s => s.selectPerson);
+  const user = useAuthStore(s => s.user);
 
   const [activeTab, setActiveTab] = useState<TabId>('details');
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -72,11 +75,13 @@ export default function MemberDrawer() {
     const children = (graph.childrenOf.get(selectedId) ?? []).map(id => people[id]).filter(Boolean);
     const spouses = (graph.spousesOf.get(selectedId) ?? []).map(id => people[id]).filter(Boolean);
 
-    const parentIds = new Set(graph.parentsOf.get(selectedId) ?? []);
-    const siblings: typeof parents = [];
-    for (const parentId of parentIds) {
-      for (const childId of graph.childrenOf.get(parentId) ?? []) {
-        if (childId !== selectedId && !siblings.find(s => s.id === childId) && people[childId]) {
+    // Siblings
+    const siblings: (typeof people)[string][] = [];
+    const seen = new Set<string>([selectedId]);
+    for (const parent of parents) {
+      for (const childId of graph.childrenOf.get(parent.id) ?? []) {
+        if (!seen.has(childId) && people[childId]) {
+          seen.add(childId);
           siblings.push(people[childId]);
         }
       }
@@ -94,11 +99,10 @@ export default function MemberDrawer() {
     return all.filter(p => p.name.toLowerCase().includes(q)).slice(0, 6);
   }, [people, selectedId, targetSearch]);
 
-  // Relationship to self
+  // Relationship to active viewer (logged in user)
   const viewerPersonId = useMemo(() => {
-    const keys = Object.keys(people);
-    return keys.find(k => people[k].bio?.includes("That's me!")) ?? keys[0];
-  }, [people]);
+    return getViewerPersonId(people, user);
+  }, [people, user]);
 
   const relationship = useMemo(() => {
     if (!selectedId || !viewerPersonId || selectedId === viewerPersonId) return null;
@@ -106,6 +110,15 @@ export default function MemberDrawer() {
   }, [selectedId, viewerPersonId, graph, people]);
 
   const viewerName = viewerPersonId ? people[viewerPersonId]?.name ?? 'You' : 'You';
+
+  const displayBio = useMemo(() => {
+    if (!person?.bio) return null;
+    const bio = person.bio.trim();
+    if ((bio === "That's me!" || bio.toLowerCase().includes("that's me")) && selectedId !== viewerPersonId) {
+      return `${person.name} — ${person.profession || 'Family member'} based in ${person.location || 'India'}.`;
+    }
+    return person.bio;
+  }, [person, selectedId, viewerPersonId]);
 
   if (!isOpen || !person) return null;
 
@@ -339,14 +352,35 @@ export default function MemberDrawer() {
                     </div>
                   )}
 
-                  {/* Relationship badge */}
-                  {relationship && relationship.label !== 'Unrelated' && (
-                    <RelationshipBadge
-                      label={relationship.label}
-                      degree={relationship.degree}
-                      degreeLabel={relationship.degreeLabel}
-                      isDirectFamily={relationship.isDirectFamily}
-                    />
+                  {/* Relationship badge / Self badge */}
+                  {selectedId === viewerPersonId ? (
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 5,
+                        padding: '4px 12px',
+                        borderRadius: 100,
+                        background: 'rgba(229, 169, 60, 0.18)',
+                        border: '1px solid var(--color-amber-glow)',
+                        color: 'var(--color-amber-glow)',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      <span>★</span> That's You
+                    </span>
+                  ) : (
+                    relationship && relationship.label !== 'Unrelated' && (
+                      <RelationshipBadge
+                        label={relationship.label}
+                        degree={relationship.degree}
+                        degreeLabel={relationship.degreeLabel}
+                        isDirectFamily={relationship.isDirectFamily}
+                      />
+                    )
                   )}
                 </div>
               </div>
@@ -383,13 +417,13 @@ export default function MemberDrawer() {
             <div style={{ padding: '24px', flex: 1 }}>
               {activeTab === 'details' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                  {person.bio && (
+                  {displayBio && (
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-amber-glow)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
                         Biography & Heirloom Notes
                       </div>
                       <p style={{ fontSize: 14, color: 'var(--color-cream)', lineHeight: 1.6, margin: 0, background: 'var(--surface-1)', padding: 14, borderRadius: 'var(--radius-sm)', border: '1px solid var(--surface-2)' }}>
-                        {person.bio}
+                        {displayBio}
                       </p>
                     </div>
                   )}

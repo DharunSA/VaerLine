@@ -8,7 +8,7 @@ import {
   type Connection,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Focus, Download, RotateCcw, Link2, X, Check } from 'lucide-react';
+import { Focus, Download, RotateCcw, Link2, X, Check, UserPlus, UserCheck, Maximize2, Sparkles, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import PersonNode from './PersonNode';
@@ -17,6 +17,9 @@ import MiniControls from './MiniControls';
 import { useAutoLayout, type GenerationBand } from './useAutoLayout';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useAuthStore } from '../../stores/authStore';
+import { useAIStore } from '../../stores/aiStore';
+import { getViewerPersonId } from '../../lib/viewerHelper';
 import familyTreeBg from '../../assets/Family_tree.jpeg';
 
 const nodeTypes = { personNode: PersonNode };
@@ -42,17 +45,23 @@ function TreeCanvasInner({ viewerPersonId: _viewerPersonId }: TreeCanvasInnerPro
   const relationships = usePeopleStore(s => s.relationships);
   const addRelationship = usePeopleStore(s => s.addRelationship);
   const selectedPersonId = usePeopleStore(s => s.selectedPersonId);
+  const selectPerson = usePeopleStore(s => s.selectPerson);
   const collapsedBranches = useUIStore(s => s.collapsedBranches);
   const focusPersonId = useUIStore(s => s.focusPersonId);
   const focusPerson = useUIStore(s => s.focusPerson);
+  const openMemberDrawer = useUIStore(s => s.openMemberDrawer);
   const closeMemberDrawer = useUIStore(s => s.closeMemberDrawer);
+  const openAddMemberModal = useUIStore(s => s.openAddMemberModal);
   const addToast = useUIStore(s => s.addToast);
+  const setNLResult = useAIStore(s => s.setNLResult);
+  const user = useAuthStore(s => s.user);
   const { fitView, setCenter, zoomIn, zoomOut } = useReactFlow();
 
   // Hybrid Manual Connection State
   const [pendingConnection, setPendingConnection] = useState<{ sourceId: string; targetId: string } | null>(null);
   const [selectedRelType, setSelectedRelType] = useState<'PARENT' | 'CHILD' | 'SPOUSE' | 'SIBLING'>('CHILD');
   const [showLegend, setShowLegend] = useState(true);
+  const [showNotInTreeModal, setShowNotInTreeModal] = useState(false);
 
   const { nodes: layoutNodes, edges: layoutEdges, generationBands } = useAutoLayout(
     people,
@@ -67,11 +76,10 @@ function TreeCanvasInner({ viewerPersonId: _viewerPersonId }: TreeCanvasInnerPro
     }));
   }, [layoutNodes, selectedPersonId]);
 
-  // Find root/viewer node
+  // Find root/viewer node matching logged-in user
   const viewerPersonId = useMemo(() => {
-    const keys = Object.keys(people);
-    return keys.find(k => people[k].bio?.includes("That's me!")) ?? keys[0];
-  }, [people]);
+    return getViewerPersonId(people, user);
+  }, [people, user]);
 
   // Center canvas on a specific person
   const centerOnPerson = useCallback((personId: string) => {
@@ -80,6 +88,37 @@ function TreeCanvasInner({ viewerPersonId: _viewerPersonId }: TreeCanvasInnerPro
       setCenter(node.position.x + 90, node.position.y + 45, { zoom: 1.1, duration: 600 });
     }
   }, [layoutNodes, setCenter]);
+
+  // Center on Me action handler
+  const handleCenterOnMe = () => {
+    if (viewerPersonId && people[viewerPersonId]) {
+      centerOnPerson(viewerPersonId);
+      selectPerson(viewerPersonId);
+      addToast(`Focused on your profile (${people[viewerPersonId].name})`, 'info');
+    } else {
+      // User is not found in the tree -> show alternative modal
+      setShowNotInTreeModal(true);
+    }
+  };
+
+  const handleAddMyselfToTree = () => {
+    setShowNotInTreeModal(false);
+    if (user?.fullName) {
+      const firstPersonId = Object.keys(people)[0] || null;
+      setNLResult({
+        newPersonName: user.fullName,
+        anchorPersonId: firstPersonId,
+        relationshipType: 'CHILD_OF',
+        confidence: 1,
+      });
+    }
+    openAddMemberModal();
+  };
+
+  const handleFitWholeTree = () => {
+    setShowNotInTreeModal(false);
+    fitView({ duration: 500, padding: 0.15 });
+  };
 
   // Handle focus request from state
   useEffect(() => {
@@ -375,22 +414,20 @@ function TreeCanvasInner({ viewerPersonId: _viewerPersonId }: TreeCanvasInnerPro
           boxShadow: 'var(--shadow-md)',
         }}
       >
-        {viewerPersonId && (
-          <button
-            onClick={() => centerOnPerson(viewerPersonId)}
-            title="Center canvas on me (shortcut: F)"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px',
-              border: 'none', background: 'none', fontSize: 12, fontWeight: 500,
-              color: 'var(--color-cream)', cursor: 'pointer', borderRadius: 'var(--radius-sm)',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-2)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-          >
-            <Focus size={14} color="var(--color-amber-glow)" />
-            Center on Me
-          </button>
-        )}
+        <button
+          onClick={handleCenterOnMe}
+          title="Center canvas on me (shortcut: F)"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px',
+            border: 'none', background: 'none', fontSize: 12, fontWeight: 500,
+            color: 'var(--color-cream)', cursor: 'pointer', borderRadius: 'var(--radius-sm)',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-2)')}
+          onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+        >
+          <Focus size={14} color="var(--color-amber-glow)" />
+          <span>Center on Me</span>
+        </button>
 
         <button
           onClick={handleResetLayout}
@@ -528,6 +565,117 @@ function TreeCanvasInner({ viewerPersonId: _viewerPersonId }: TreeCanvasInnerPro
           </p>
         </div>
       )}
+
+      {/* Not In Tree Modal Dialog */}
+      <AnimatePresence>
+        {showNotInTreeModal && (
+          <div className="modal-overlay" onClick={() => setShowNotInTreeModal(false)} style={{ zIndex: 100 }}>
+            <motion.div
+              className="modal-content"
+              initial={{ opacity: 0, scale: 0.94, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 15 }}
+              onClick={e => e.stopPropagation()}
+              style={{
+                maxWidth: 460,
+                background: 'var(--surface-0)',
+                border: '1.5px solid var(--surface-2)',
+                borderRadius: 'var(--radius-xl)',
+                overflow: 'hidden',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(229, 169, 60, 0.15)',
+              }}
+            >
+              <div style={{ height: 4, background: 'linear-gradient(90deg, #E5A93C, #B47820)' }} />
+
+              <div style={{ padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                  <div
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: '50%',
+                      background: 'rgba(229, 169, 60, 0.15)',
+                      border: '1px solid rgba(229, 169, 60, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <UserPlus size={22} color="var(--color-amber-glow)" />
+                  </div>
+                  <button
+                    onClick={() => setShowNotInTreeModal(false)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      fontSize: 16,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <h3 className="font-serif" style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px', color: 'var(--color-cream)' }}>
+                  You're Not in This Tree Yet
+                </h3>
+                <p style={{ fontSize: 13, color: 'var(--color-warm-gray)', lineHeight: 1.6, margin: '0 0 20px' }}>
+                  {user?.fullName ? (
+                    <>
+                      We couldn't find an existing member profile matching <strong style={{ color: 'var(--color-cream)' }}>{user.fullName}</strong>.
+                      Would you like to plant yourself as a member or view the full family tree?
+                    </>
+                  ) : (
+                    <>
+                      You are currently browsing without an associated member profile.
+                      Would you like to add yourself to this tree or view the whole layout?
+                    </>
+                  )}
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <button
+                    type="button"
+                    onClick={handleAddMyselfToTree}
+                    className="btn-primary"
+                    style={{
+                      width: '100%',
+                      padding: '11px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 8,
+                      fontSize: 13,
+                    }}
+                  >
+                    <UserPlus size={16} />
+                    <span>Add Myself ({user?.fullName || 'New Member'}) to Tree</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleFitWholeTree}
+                    className="btn-secondary"
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 8,
+                      fontSize: 13,
+                    }}
+                  >
+                    <Maximize2 size={15} />
+                    <span>Fit Entire Family Tree in View</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
