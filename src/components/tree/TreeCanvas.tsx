@@ -32,9 +32,9 @@ interface TreeCanvasInnerProps {
 /** Store absolute positions to localStorage */
 function saveNodePosition(nodeId: string, x: number, y: number) {
   try {
-    const stored = JSON.parse(localStorage.getItem('verline-node-offsets') ?? '{}');
+    const stored = JSON.parse(localStorage.getItem('vaerline-node-offsets') ?? localStorage.getItem('verline-node-offsets') ?? '{}');
     stored[nodeId] = { x, y };
-    localStorage.setItem('verline-node-offsets', JSON.stringify(stored));
+    localStorage.setItem('vaerline-node-offsets', JSON.stringify(stored));
   } catch {
     // ignore localStorage errors
   }
@@ -203,6 +203,7 @@ function TreeCanvasInner({ viewerPersonId: _viewerPersonId }: TreeCanvasInnerPro
 
   // Reset layout to default automatic structure
   const handleResetLayout = useCallback(() => {
+    localStorage.removeItem('vaerline-node-offsets');
     localStorage.removeItem('verline-node-offsets');
     addToast('Tree layout reset to auto-aligned structure', 'success');
     setTimeout(() => {
@@ -224,7 +225,7 @@ function TreeCanvasInner({ viewerPersonId: _viewerPersonId }: TreeCanvasInnerPro
     );
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `verline-family-tree-${new Date().toISOString().slice(0, 10)}.json`);
+    downloadAnchor.setAttribute('download', `vaerline-family-tree-${new Date().toISOString().slice(0, 10)}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();

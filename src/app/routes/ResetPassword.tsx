@@ -127,7 +127,7 @@ export default function ResetPassword() {
           </div>
           <div>
             <div className="font-serif" style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-cream)' }}>
-              VerLine
+              Vaerline
             </div>
             <div style={{ fontSize: 11, color: 'var(--color-warm-gray)' }}>Account Security & Recovery</div>
           </div>
@@ -225,7 +225,7 @@ export default function ResetPassword() {
                     {...register('password')}
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Min. 8 characters (1 uppercase, 1 number)"
-                    className="verline-input"
+                    className="vaerline-input"
                     style={{ paddingLeft: 38, paddingRight: 38 }}
                   />
                   <button
@@ -279,7 +279,7 @@ export default function ResetPassword() {
                     {...register('confirmPassword')}
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Re-enter your new password"
-                    className="verline-input"
+                    className="vaerline-input"
                     style={{ paddingLeft: 38, paddingRight: 38 }}
                   />
                   <button

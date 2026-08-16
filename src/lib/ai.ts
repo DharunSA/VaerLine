@@ -1,5 +1,5 @@
 /**
- * AI Client for Verline
+ * AI Client for Vaerline
  *
  * Supports Dual Live Production AI Configuration:
  * 1. Primary LLM: Google Gemini Flash (Google AI Studio)

@@ -1,4 +1,4 @@
-// Core domain types for the Verline family tree engine
+// Core domain types for the Vaerline family tree engine
 
 export interface Person {
   id: string;
@@ -11,6 +11,7 @@ export interface Person {
   profession?: string;
   location?: string;
   bio?: string;
+  phone?: string;     // E.164 phone or national format e.g. +919876543210
   createdBy?: string;
   createdAt?: string;
 }
@@ -23,6 +24,7 @@ export interface Relationship {
   type: RelationshipType;
   fromPersonId: string;
   toPersonId: string;
+  marriageDate?: string; // ISO date string for wedding anniversaries
   isAdopted?: boolean;
   isDivorced?: boolean;
   createdAt?: string;
@@ -66,6 +68,7 @@ export interface NewPerson {
   profession?: string;
   location?: string;
   bio?: string;
+  phone?: string;
 }
 
 export interface RelationInput {

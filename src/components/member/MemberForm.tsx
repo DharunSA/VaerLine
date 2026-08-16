@@ -5,6 +5,7 @@ export interface MemberFormValues {
   gender: 'male' | 'female' | 'other' | 'unspecified';
   dob?: string;
   dod?: string;
+  phone?: string;
   photoUrl?: string;
   profession?: string;
   location?: string;
@@ -44,7 +45,7 @@ function Field({ label, name, type = 'text', placeholder, required }: FieldProps
         {...register(name)}
         type={type}
         placeholder={placeholder}
-        className="verline-input"
+        className="vaerline-input"
         style={error ? { borderColor: '#F87171' } : {}}
       />
       {error && (
@@ -82,7 +83,7 @@ function SelectField({ label, name, options, required }: SelectFieldProps) {
       </label>
       <select
         {...register(name)}
-        className="verline-input"
+        className="vaerline-input"
         style={error ? { borderColor: '#F87171' } : {}}
       >
         {options.map(opt => (
@@ -126,7 +127,7 @@ function TextAreaField({ label, name, placeholder, rows = 3 }: TextAreaFieldProp
         {...register(name)}
         placeholder={placeholder}
         rows={rows}
-        className="verline-input"
+        className="vaerline-input"
         style={{ resize: 'vertical', minHeight: 80 }}
       />
     </div>
@@ -156,6 +157,9 @@ export default function MemberForm() {
         <Field label="Date of Birth" name="dob" type="date" />
         <Field label="Date of Death" name="dod" type="date" />
       </div>
+
+      {/* Phone Number (WhatsApp Enabled) */}
+      <Field label="WhatsApp / Phone Number" name="phone" placeholder="+91 98765 43210" />
 
       {/* Profession & Location */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>

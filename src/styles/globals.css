@@ -98,7 +98,7 @@ h1, h2, h3, .display {
   color: var(--text-primary);
 }
 
-/* ─── Verline-specific Components ───────────────────────────────────────────── */
+/* ─── Vaerline-specific Components ───────────────────────────────────────────── */
 
 /* Person node card on the canvas */
 .person-node {
@@ -233,6 +233,7 @@ h1, h2, h3, .display {
 }
 
 /* Input / form fields */
+.vaerline-input,
 .verline-input {
   width: 100%;
   padding: 10px 14px;
@@ -246,11 +247,13 @@ h1, h2, h3, .display {
   outline: none;
 }
 
+.vaerline-input:focus,
 .verline-input:focus {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(229, 169, 60, 0.2);
 }
 
+.vaerline-input::placeholder,
 .verline-input::placeholder {
   color: var(--text-muted);
 }

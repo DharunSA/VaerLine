@@ -118,7 +118,7 @@ export default function RegisterForm() {
             {...register('fullName')}
             type="text"
             placeholder="e.g. Ramesh Sharma"
-            className="verline-input"
+            className="vaerline-input"
             style={{ paddingLeft: 38 }}
           />
         </div>
@@ -140,7 +140,7 @@ export default function RegisterForm() {
             {...register('email')}
             type="email"
             placeholder="you@domain.com"
-            className="verline-input"
+            className="vaerline-input"
             style={{ paddingLeft: 38 }}
           />
         </div>
@@ -162,7 +162,7 @@ export default function RegisterForm() {
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             placeholder="Min. 8 characters (1 uppercase, 1 number)"
-            className="verline-input"
+            className="vaerline-input"
             style={{ paddingLeft: 38, paddingRight: 38 }}
           />
           <button
@@ -216,7 +216,7 @@ export default function RegisterForm() {
             {...register('confirmPassword')}
             type={showConfirmPassword ? 'text' : 'password'}
             placeholder="Re-enter your password"
-            className="verline-input"
+            className="vaerline-input"
             style={{ paddingLeft: 38, paddingRight: 38 }}
           />
           <button

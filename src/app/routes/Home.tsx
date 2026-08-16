@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Users, Trophy, Sparkles, TrendingUp, Cake, ArrowRight, GitBranch } from 'lucide-react';
+import { Users, Trophy, Sparkles, TrendingUp, Cake, ArrowRight, GitBranch, Heart, Phone, Gift } from 'lucide-react';
+import WhatsAppIcon from '../../components/icons/WhatsAppIcon';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
@@ -11,11 +12,13 @@ import SearchBar from '../../components/search/SearchBar';
 import SearchResultCard from '../../components/search/SearchResultCard';
 import FamilyStoryPanel from '../../components/ai/FamilyStoryPanel';
 import NLAddMemberBar from '../../components/ai/NLAddMemberBar';
+import WhatsAppWishModal, { type MilestoneCelebration } from '../../components/reminders/WhatsAppWishModal';
 import { searchPeople } from '../../lib/fuzzySearch';
 import familyTreeBg from '../../assets/Family_tree.jpeg';
 
 export default function Home() {
   const people = usePeopleStore(s => s.people);
+  const relationships = usePeopleStore(s => s.relationships);
   const graph = usePeopleStore(s => s.graph);
   const selectPerson = usePeopleStore(s => s.selectPerson);
   const openDrawer = useUIStore(s => s.openMemberDrawer);
@@ -23,6 +26,9 @@ export default function Home() {
   const searchQuery = useUIStore(s => s.searchQuery);
   const user = useAuthStore(s => s.user);
   const navigate = useNavigate();
+
+  const [activeCelebration, setActiveCelebration] = useState<MilestoneCelebration | null>(null);
+  const [isWishModalOpen, setIsWishModalOpen] = useState(false);
 
   const peopleList = Object.values(people);
 
@@ -43,18 +49,16 @@ export default function Home() {
     const oldest = byYear.length ? Math.min(...byYear) : null;
     const youngest = byYear.length ? Math.max(...byYear) : null;
 
-    // Count generations
+    // Calculate max depth for generations
     let maxDepth = 0;
-    function getDepth(id: string, depth: number) {
-      maxDepth = Math.max(maxDepth, depth);
-      for (const childId of graph.childrenOf.get(id) ?? []) {
-        getDepth(childId, depth + 1);
-      }
-    }
-    for (const id of Object.keys(people)) {
-      if (!graph.parentsOf.has(id) || graph.parentsOf.get(id)!.length === 0) {
-        getDepth(id, 0);
-      }
+    const roots = peopleList.filter(p => (graph.parentsOf.get(p.id)?.length ?? 0) === 0);
+    const getDepth = (id: string, depth: number): number => {
+      const children = graph.childrenOf.get(id) ?? [];
+      if (children.length === 0) return depth;
+      return Math.max(...children.map(c => getDepth(c, depth + 1)));
+    };
+    for (const r of roots) {
+      maxDepth = Math.max(maxDepth, getDepth(r.id, 1));
     }
 
     // Profession stats
@@ -83,25 +87,92 @@ export default function Home() {
     };
   }, [people, graph, peopleList]);
 
-  // ── Upcoming birthdays (rolling 30-day window) ───────────────────────────
-  const upcomingBirthdays = useMemo(() => {
+  // ── Upcoming Birthdays & Anniversaries (rolling 35-day window) ───────────
+  const upcomingCelebrations = useMemo<MilestoneCelebration[]>(() => {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const todayMs = today.getTime();
-    const windowMs = 30 * 24 * 60 * 60 * 1000; // 30 days
+    const windowMs = 35 * 24 * 60 * 60 * 1000; // 35 days window
 
-    return peopleList
-      .filter(p => p.dob && !p.dod)
-      .map(p => {
-        const bday = new Date(p.dob!);
-        const thisYear = new Date(today.getFullYear(), bday.getMonth(), bday.getDate());
-        const nextYear = new Date(today.getFullYear() + 1, bday.getMonth(), bday.getDate());
-        const nextOccurrence = thisYear.getTime() >= todayMs ? thisYear : nextYear;
-        return { person: p, nextOccurrence, month: bday.getMonth(), day: bday.getDate() };
-      })
-      .filter(({ nextOccurrence }) => nextOccurrence.getTime() - todayMs <= windowMs)
-      .sort((a, b) => a.nextOccurrence.getTime() - b.nextOccurrence.getTime())
-      .slice(0, 5);
-  }, [peopleList]);
+    const milestones: MilestoneCelebration[] = [];
+
+    // 1. Birthdays
+    for (const p of peopleList) {
+      if (!p.dob || p.dod) continue;
+      const bday = new Date(p.dob);
+      if (isNaN(bday.getTime())) continue;
+
+      let nextOccur = new Date(today.getFullYear(), bday.getMonth(), bday.getDate());
+      if (nextOccur.getTime() < todayMs) {
+        nextOccur = new Date(today.getFullYear() + 1, bday.getMonth(), bday.getDate());
+      }
+
+      const diffMs = nextOccur.getTime() - todayMs;
+      if (diffMs <= windowMs) {
+        const daysRemaining = Math.round(diffMs / (1000 * 60 * 60 * 24));
+        const turningAge = nextOccur.getFullYear() - bday.getFullYear();
+
+        milestones.push({
+          id: `bday-${p.id}`,
+          type: 'birthday',
+          person: p,
+          date: p.dob,
+          nextOccurrence: nextOccur,
+          daysRemaining,
+          turningAge,
+        });
+      }
+    }
+
+    // 2. Anniversaries
+    const processedCouples = new Set<string>();
+    for (const r of relationships) {
+      if (r.type !== 'SPOUSE_OF' || !r.marriageDate) continue;
+      const p1 = people[r.fromPersonId];
+      const p2 = people[r.toPersonId];
+      if (!p1 || !p2) continue;
+
+      const coupleKey = [p1.id, p2.id].sort().join(':');
+      if (processedCouples.has(coupleKey)) continue;
+      processedCouples.add(coupleKey);
+
+      const mDate = new Date(r.marriageDate);
+      if (isNaN(mDate.getTime())) continue;
+
+      let nextOccur = new Date(today.getFullYear(), mDate.getMonth(), mDate.getDate());
+      if (nextOccur.getTime() < todayMs) {
+        nextOccur = new Date(today.getFullYear() + 1, mDate.getMonth(), mDate.getDate());
+      }
+
+      const diffMs = nextOccur.getTime() - todayMs;
+      if (diffMs <= windowMs) {
+        const daysRemaining = Math.round(diffMs / (1000 * 60 * 60 * 24));
+        const years = nextOccur.getFullYear() - mDate.getFullYear();
+
+        let milestoneName = `${years}th Wedding Anniversary`;
+        if (years === 50) milestoneName = '50th Golden Anniversary';
+        else if (years === 25) milestoneName = '25th Silver Anniversary';
+        else if (years === 60) milestoneName = '60th Diamond Anniversary';
+        else if (years === 30) milestoneName = '30th Pearl Anniversary';
+        else if (years === 40) milestoneName = '40th Ruby Anniversary';
+
+        milestones.push({
+          id: `anni-${coupleKey}`,
+          type: 'anniversary',
+          person: p1,
+          spouse: p2,
+          relationship: r,
+          date: r.marriageDate,
+          nextOccurrence: nextOccur,
+          daysRemaining,
+          anniversaryYears: years,
+          anniversaryMilestoneName: milestoneName,
+        });
+      }
+    }
+
+    return milestones.sort((a, b) => a.daysRemaining - b.daysRemaining);
+  }, [peopleList, relationships, people]);
 
   // ── Search results ────────────────────────────────────────────────────────
   const searchResults = useMemo(() => {
@@ -115,6 +186,11 @@ export default function Home() {
       return { person, relationship: rel ?? undefined };
     });
   }, [searchQuery, peopleList, viewerPersonId, graph, people]);
+
+  const handleOpenWish = (cel: MilestoneCelebration) => {
+    setActiveCelebration(cel);
+    setIsWishModalOpen(true);
+  };
 
   return (
     <div style={{ height: '100%', overflowY: 'auto', position: 'relative' }}>
@@ -174,7 +250,7 @@ export default function Home() {
               letterSpacing: '-0.02em',
             }}
           >
-            VerLine — Your Roots, in One Line.
+            Vaerline — Your Roots, in One Line.
           </h1>
           <p style={{ color: 'var(--color-warm-gray)', fontSize: 16, margin: 0, maxWidth: 640, lineHeight: 1.5 }}>
             {peopleList.length === 0
@@ -270,41 +346,149 @@ export default function Home() {
               </>
             )}
 
-            {/* Upcoming birthdays */}
-            {upcomingBirthdays.length > 0 && (
-              <div className="stat-card" style={{ gridColumn: 'span 2' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                  <Cake size={18} color="var(--color-amber-glow)" />
-                  <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
-                    Upcoming Birthdays (Next 30 Days)
-                  </h3>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                  {upcomingBirthdays.map(({ person, month, day }) => (
-                    <button
-                      key={person.id}
-                      onClick={() => { selectPerson(person.id); openDrawer(); }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        padding: '8px 14px',
-                        background: 'var(--surface-0)',
-                        border: '1px solid var(--surface-2)',
-                        borderRadius: 'var(--radius-sm)',
-                        cursor: 'pointer',
-                        fontSize: 13,
-                        color: 'var(--text-primary)',
-                        transition: 'all 150ms',
-                      }}
+            {/* Upcoming Family Celebrations */}
+            {upcomingCelebrations.length > 0 && (
+              <div className="stat-card" style={{ gridColumn: '1 / -1', padding: '20px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div>
+                    <h3
+                      className="font-serif"
+                      style={{ fontSize: 18, fontWeight: 600, margin: 0, color: 'var(--color-cream)' }}
                     >
-                      <span>🎂</span>
-                      <span style={{ fontWeight: 500 }}>{person.name}</span>
-                      <span style={{ color: 'var(--color-amber-glow)', fontSize: 11, fontWeight: 600 }}>
-                        {new Date(2000, month, day).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
-                      </span>
-                    </button>
-                  ))}
+                      Upcoming Celebrations
+                    </h3>
+                    <p style={{ fontSize: 12, color: 'var(--color-warm-gray)', margin: '2px 0 0' }}>
+                      Milestones in the next 35 days
+                    </p>
+                  </div>
+
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      padding: '3px 9px',
+                      borderRadius: 100,
+                      background: 'var(--surface-1)',
+                      border: '1px solid var(--surface-2)',
+                      color: 'var(--color-warm-gray)',
+                    }}
+                  >
+                    {upcomingCelebrations.length} upcoming
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                    gap: 12,
+                  }}
+                >
+                  {upcomingCelebrations.map(cel => {
+                    const isBday = cel.type === 'birthday';
+                    const celDate = cel.nextOccurrence.toLocaleDateString('en-IN', {
+                      month: 'short',
+                      day: 'numeric',
+                    });
+
+                    return (
+                      <div
+                        key={cel.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '12px 14px',
+                          background: 'var(--surface-0)',
+                          border: '1px solid var(--surface-2)',
+                          borderRadius: 'var(--radius-sm)',
+                          gap: 12,
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: 1 }}>
+                          <span style={{ fontSize: 16 }}>
+                            {isBday ? '🎂' : '💍'}
+                          </span>
+
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div
+                              style={{
+                                fontSize: 13,
+                                fontWeight: 600,
+                                color: 'var(--color-cream)',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              {cel.person.name}
+                              {cel.spouse ? ` & ${cel.spouse.name}` : ''}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: 11,
+                                color: 'var(--color-warm-gray)',
+                                marginTop: 1,
+                              }}
+                            >
+                              {isBday
+                                ? `Turning ${cel.turningAge || ''} • ${celDate}`
+                                : `${cel.anniversaryMilestoneName || 'Anniversary'} • ${celDate}`}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                          <span
+                            style={{
+                              fontSize: 10,
+                              fontWeight: 600,
+                              padding: '2px 6px',
+                              borderRadius: 3,
+                              background: 'var(--surface-1)',
+                              color: cel.daysRemaining === 0 ? 'var(--color-amber-glow)' : 'var(--color-warm-gray)',
+                            }}
+                          >
+                            {cel.daysRemaining === 0
+                              ? 'Today'
+                              : cel.daysRemaining === 1
+                              ? 'Tomorrow'
+                              : `In ${cel.daysRemaining}d`}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => handleOpenWish(cel)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              padding: '5px 11px',
+                              background: '#1F3A2E',
+                              border: '1px solid #2E7D5B',
+                              borderRadius: 'var(--radius-sm)',
+                              color: '#E8F5E9',
+                              fontSize: 11,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              transition: 'all 140ms',
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.background = '#28543E';
+                              e.currentTarget.style.borderColor = '#34D399';
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.background = '#1F3A2E';
+                              e.currentTarget.style.borderColor = '#2E7D5B';
+                            }}
+                          >
+                            <WhatsAppIcon size={12} color="#25D366" />
+                            <span>Wish</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -376,6 +560,13 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* WhatsApp Wish Interactive Modal */}
+      <WhatsAppWishModal
+        isOpen={isWishModalOpen}
+        onClose={() => setIsWishModalOpen(false)}
+        celebration={activeCelebration}
+      />
     </div>
   );
 }

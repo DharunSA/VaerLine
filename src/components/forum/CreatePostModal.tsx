@@ -216,7 +216,7 @@ export default function CreatePostModal() {
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="e.g. Seeking information regarding grandmother Meena's ancestral home in Mysore"
-                className="verline-input"
+                className="vaerline-input"
                 style={{ fontSize: 14, fontWeight: 500 }}
               />
             </div>
@@ -230,7 +230,7 @@ export default function CreatePostModal() {
               <select
                 value={linkedPersonId}
                 onChange={e => setLinkedPersonId(e.target.value)}
-                className="verline-input"
+                className="vaerline-input"
                 style={{ cursor: 'pointer' }}
               >
                 <option value="">-- No specific member attached --</option>
@@ -252,7 +252,7 @@ export default function CreatePostModal() {
                 onChange={e => setContent(e.target.value)}
                 rows={5}
                 placeholder="Describe your inquiry, share dates, known locations, or background details that family members can chime in on…"
-                className="verline-input"
+                className="vaerline-input"
                 style={{ resize: 'vertical', lineHeight: 1.6 }}
               />
             </div>
@@ -296,7 +296,7 @@ export default function CreatePostModal() {
                 onChange={e => setTagInput(e.target.value)}
                 onKeyDown={handleAddTag}
                 placeholder="Type tag and press Enter (e.g. #Jaipur, #1950s, #OralHistory)"
-                className="verline-input"
+                className="vaerline-input"
               />
             </div>
 

@@ -1,6 +1,6 @@
-# 🌳 VerLine — Complete Technical Architecture & Viva Presentation Documentation
+# 🌳 Vaerline — Complete Technical Architecture & Viva Presentation Documentation
 
-This document provides a comprehensive technical breakdown of **VerLine** (*Your Roots, in One Line*), designed to help present the project to evaluators, guides, and technical leads.
+This document provides a comprehensive technical breakdown of **Vaerline** (*Your Roots, in One Line*), designed to help present the project to evaluators, guides, and technical leads.
 
 ---
 
@@ -20,9 +20,9 @@ This document provides a comprehensive technical breakdown of **VerLine** (*Your
 
 ## 1. Project Overview & Vision
 
-**VerLine** is an heirloom-grade, AI-enhanced, living family tree platform designed for multi-generational genealogical visualization. 
+**Vaerline** is an heirloom-grade, AI-enhanced, living family tree platform designed for multi-generational genealogical visualization. 
 
-Unlike traditional tree editors that produce cluttered, overlapping node trees or require tedious manual form entry, VerLine combines:
+Unlike traditional tree editors that produce cluttered, overlapping node trees or require tedious manual form entry, Vaerline combines:
 1. **Natural Language AI Parsing**: Enter plain sentences like *"Dr. Ramesh is the elder brother of Arjun Sharma born in 1965 in Jaipur, he is a Surgeon"* to automatically parse and pre-fill family records.
 2. **Deterministic Topological Graph Layout**: Automatically calculates generation bands, spouse pairings, and descendant branches with zero line collisions.
 3. **Kinship Graph Search**: Calculates degree of relationship between any two members using Breadth-First Search (BFS).
@@ -122,7 +122,7 @@ The family tree is modeled as a directed multi-graph $G = (V, E)$:
 ### D. Custom Damerau-Levenshtein Fuzzy Search Engine
 
 #### Implementation (`src/lib/fuzzySearch.ts`)
-Instead of relying on heavy external dependencies, VerLine includes a custom Damerau-Levenshtein matrix distance algorithm supporting:
+Instead of relying on heavy external dependencies, Vaerline includes a custom Damerau-Levenshtein matrix distance algorithm supporting:
 - Character Insertions, Deletions, and Substitutions.
 - Transpositions of adjacent characters (e.g., `Rahmesh` $\to$ `Ramesh`).
 

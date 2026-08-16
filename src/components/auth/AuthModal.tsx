@@ -75,7 +75,7 @@ export default function AuthModal() {
                 <TreePine size={18} color="#12161A" />
               </div>
               <span className="font-serif" style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-cream)' }}>
-                VerLine
+                Vaerline
               </span>
             </div>
 

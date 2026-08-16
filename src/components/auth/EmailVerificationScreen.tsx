@@ -100,7 +100,7 @@ export default function EmailVerificationScreen() {
         <ol style={{ margin: 0, paddingLeft: 20 }}>
           <li>Open your email inbox (check Spam or Promotions if needed).</li>
           <li>Click the verification link to confirm your ownership.</li>
-          <li>Return to VerLine to start building your heirloom tree.</li>
+          <li>Return to Vaerline to start building your heirloom tree.</li>
         </ol>
       </div>
 

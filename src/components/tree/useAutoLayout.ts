@@ -211,7 +211,7 @@ function countDescendants(
 /** Load absolute positions from localStorage */
 function getStoredPositions(): Record<string, { x: number; y: number }> {
   try {
-    const raw = localStorage.getItem('verline-node-offsets');
+    const raw = localStorage.getItem('vaerline-node-offsets') ?? localStorage.getItem('verline-node-offsets');
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};

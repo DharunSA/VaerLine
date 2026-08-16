@@ -12,7 +12,7 @@ export function getViewerPersonId(
   const peopleList = Array.isArray(people) ? people : Object.values(people);
   if (peopleList.length === 0) return null;
 
-  const isDemoUser = !user || user.email === 'aditya.sharma@verline.family';
+  const isDemoUser = !user || user.email === 'aditya.sharma@vaerline.family';
 
   // 1. If a real user is authenticated (e.g. Dharun)
   if (user && !isDemoUser) {

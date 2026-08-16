@@ -250,7 +250,7 @@ Write it in second person ("${toName} is your..."). Be warm and conversational, 
         })
         .join('\n');
 
-      const prompt = `You are writing a warm, elegant family history narrative for a family tree app called Verline.
+      const prompt = `You are writing a warm, elegant family history narrative for a family tree app called Vaerline.
 
 Family members:
 ${context}

@@ -1,4 +1,4 @@
-# 🎨 VerLine Design Theme — Golden Heirloom
+# 🎨 Vaerline Design Theme — Golden Heirloom
 
 Derived from the reference visual artwork (`src/assets/Family_tree.jpeg`), the **Golden Heirloom** theme captures the magical, deep-rooted atmosphere of an ancient illuminated family tree.
 
