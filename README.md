@@ -1,4 +1,4 @@
-# 🌳 VerLine — Your Roots, in One Line.
+# 🌳 Vaerline — Your Roots, in One Line.
 
 > An interactive, AI-enhanced living family tree visualization platform with real-time graph layout, dual-LLM natural language parsing, and hybrid drag-and-drop linking.
 
@@ -22,8 +22,8 @@
 
 ### 1. Installation
 ```bash
-git clone https://github.com/DharunSA/VerLine.git
-cd VerLine
+git clone https://github.com/DharunSA/VaerLine.git
+cd VaerLine
 npm install
 ```
 

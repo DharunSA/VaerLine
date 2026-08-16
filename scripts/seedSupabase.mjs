@@ -86,7 +86,7 @@ async function seedCloudDatabase() {
       dob: '2001-08-11',
       profession: 'Software Architect',
       location: 'Bangalore',
-      bio: 'Software Architect and creator of the VerLine family heirloom platform.',
+      bio: 'Software Architect and creator of the Vaerline family heirloom platform.',
     },
     {
       id: PEOPLE_IDS.kavya,

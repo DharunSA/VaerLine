@@ -122,7 +122,7 @@ export default function ForgotPasswordForm() {
             {...register('email')}
             type="email"
             placeholder="you@domain.com"
-            className="verline-input"
+            className="vaerline-input"
             style={{ paddingLeft: 38 }}
           />
         </div>

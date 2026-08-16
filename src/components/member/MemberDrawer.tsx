@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { X, MapPin, Briefcase, TreePine, Edit3, Trash2, AlertTriangle, Link, Search, Check, Unlink } from 'lucide-react';
+import WhatsAppIcon from '../icons/WhatsAppIcon';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { usePeopleStore } from '../../stores/peopleStore';
@@ -387,7 +388,31 @@ export default function MemberDrawer() {
             </div>
 
             {/* Quick Stats */}
-            <div style={{ display: 'flex', borderBottom: '1px solid var(--surface-2)', padding: '12px 24px', gap: 18, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--surface-2)', padding: '12px 24px', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+              {person.phone && (
+                <a
+                  href={`https://wa.me/${person.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${person.name.split(' ')[0]}!`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: '#25D366',
+                    background: 'rgba(37, 211, 102, 0.12)',
+                    border: '1px solid rgba(37, 211, 102, 0.3)',
+                    padding: '4px 10px',
+                    borderRadius: 100,
+                    textDecoration: 'none',
+                  }}
+                  title="Open chat in WhatsApp"
+                >
+                  <WhatsAppIcon size={14} color="#25D366" />
+                  <span>{person.phone}</span>
+                </a>
+              )}
               {person.profession && (
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-warm-gray)', fontWeight: 500 }}>
                   <Briefcase size={13} color="var(--color-amber-glow)" /> {person.profession}

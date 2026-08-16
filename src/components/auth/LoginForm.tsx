@@ -45,7 +45,7 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div>
         <h2 className="font-serif" style={{ fontSize: 26, fontWeight: 700, margin: '0 0 6px', color: 'var(--color-cream)' }}>
-          Welcome back to VerLine
+          Welcome back to Vaerline
         </h2>
         <p style={{ fontSize: 13, color: 'var(--color-warm-gray)', margin: 0 }}>
           Sign in to access your family tree records and community discussions.
@@ -87,7 +87,7 @@ export default function LoginForm() {
             {...register('email')}
             type="email"
             placeholder="you@domain.com"
-            className="verline-input"
+            className="vaerline-input"
             style={{ paddingLeft: 38 }}
           />
         </div>
@@ -118,7 +118,7 @@ export default function LoginForm() {
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             placeholder="Enter your password"
-            className="verline-input"
+            className="vaerline-input"
             style={{ paddingLeft: 38, paddingRight: 38 }}
           />
           <button

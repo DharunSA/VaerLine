@@ -1,5 +1,5 @@
 /**
- * Live Production Multi-Provider AI Engine for VerLine
+ * Live Production Multi-Provider AI Engine for Vaerline
  *
  * 1. Primary LLM: Google Gemini Flash (Google AI Studio)
  *    - Deep language understanding for complex, messy real-world family descriptions.

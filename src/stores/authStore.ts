@@ -44,7 +44,7 @@ interface AuthStore {
 
 const DEMO_USER_CREATOR: UserProfile = {
   id: 'demo-creator-123',
-  email: 'aditya.sharma@verline.family',
+  email: 'aditya.sharma@vaerline.family',
   fullName: 'Aditya Sharma',
   avatarUrl: undefined,
   role: 'creator',
@@ -129,7 +129,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       });
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      console.warn('[Verline Auth] Supabase init notice:', errorMessage);
+      console.warn('[Vaerline Auth] Supabase init notice:', errorMessage);
       set({ isLoading: false });
     }
   },
@@ -267,7 +267,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       try {
         await supabase.auth.signOut();
       } catch (err) {
-        console.warn('[Verline Auth] Sign out error:', err);
+        console.warn('[Vaerline Auth] Sign out error:', err);
       }
     }
     set({
@@ -387,7 +387,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     set({
       user: role === 'creator' ? DEMO_USER_CREATOR : {
         id: 'demo-member-456',
-        email: 'priya.sharma@verline.family',
+        email: 'priya.sharma@vaerline.family',
         fullName: 'Priya Sharma',
         role: 'member',
         isEmailVerified: true,

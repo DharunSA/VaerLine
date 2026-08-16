@@ -43,33 +43,33 @@ function recomputeGraph(rels: Relationship[]): Graph {
 const DEMO_TREE_ID = 'demo-tree';
 
 const INITIAL_PEOPLE: Record<string, Person> = {
-  '10000000-0000-0000-0000-000000000001': { id: '10000000-0000-0000-0000-000000000001', treeId: '00000000-0000-0000-0000-000000000001', name: 'Raj Sharma', gender: 'male', dob: '1942-03-15', profession: 'Retired Teacher', location: 'Mumbai', bio: 'Family patriarch, retired educator with 40 years of service in Mumbai.' },
-  '10000000-0000-0000-0000-000000000002': { id: '10000000-0000-0000-0000-000000000002', treeId: '00000000-0000-0000-0000-000000000001', name: 'Meena Sharma', gender: 'female', dob: '1945-08-22', profession: 'Homemaker', location: 'Mumbai', bio: 'Family matriarch, renowned for preserving heirloom recipes and family lore.' },
-  '10000000-0000-0000-0000-000000000003': { id: '10000000-0000-0000-0000-000000000003', treeId: '00000000-0000-0000-0000-000000000001', name: 'Arjun Sharma', gender: 'male', dob: '1968-11-10', profession: 'Software Engineer', location: 'Bangalore', bio: 'Senior technology consultant, passionate genealogist and father of Dharun.' },
-  '10000000-0000-0000-0000-000000000004': { id: '10000000-0000-0000-0000-000000000004', treeId: '00000000-0000-0000-0000-000000000001', name: 'Priya Sharma', gender: 'female', dob: '1971-04-25', profession: 'Doctor', location: 'Bangalore', bio: 'Chief Medical Officer, mother of Dharun and Kavya.' },
-  '10000000-0000-0000-0000-000000000005': { id: '10000000-0000-0000-0000-000000000005', treeId: '00000000-0000-0000-0000-000000000001', name: 'Dharun SA', gender: 'male', dob: '2001-08-11', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the VerLine family heirloom platform.' },
-  '10000000-0000-0000-0000-000000000006': { id: '10000000-0000-0000-0000-000000000006', treeId: '00000000-0000-0000-0000-000000000001', name: 'Kavya Sharma', gender: 'female', dob: '1998-02-09', profession: 'Student', location: 'Pune', bio: 'Master of Design student in Pune, sister of Dharun.' },
-  '10000000-0000-0000-0000-000000000007': { id: '10000000-0000-0000-0000-000000000007', treeId: '00000000-0000-0000-0000-000000000001', name: 'Sunita Kapoor', gender: 'female', dob: '1972-06-30', profession: 'Architect', location: 'Delhi', bio: 'Landscape architect based in New Delhi, aunt of Dharun.' },
-  '10000000-0000-0000-0000-000000000008': { id: '10000000-0000-0000-0000-000000000008', treeId: '00000000-0000-0000-0000-000000000001', name: 'Dev Kapoor', gender: 'male', dob: '1970-09-18', profession: 'Businessman', location: 'Delhi', bio: 'Entrepreneur and business leader in New Delhi, uncle of Dharun.' },
-  '10000000-0000-0000-0000-000000000009': { id: '10000000-0000-0000-0000-000000000009', treeId: '00000000-0000-0000-0000-000000000001', name: 'Rohan Kapoor', gender: 'male', dob: '1999-12-01', profession: 'Graphic Designer', location: 'Delhi', bio: 'Creative visual designer in Delhi, cousin of Dharun.' },
-  '10000000-0000-0000-0000-000000000010': { id: '10000000-0000-0000-0000-000000000010', treeId: '00000000-0000-0000-0000-000000000001', name: 'Ananya Menon', gender: 'female', dob: '1996-05-20', profession: 'Journalist', location: 'Chennai', bio: "Spouse of Dharun SA, investigative cultural journalist." },
+  '10000000-0000-0000-0000-000000000001': { id: '10000000-0000-0000-0000-000000000001', treeId: '00000000-0000-0000-0000-000000000001', name: 'Raj Sharma', gender: 'male', dob: '1942-03-15', phone: '+919820112233', profession: 'Retired Teacher', location: 'Mumbai', bio: 'Family patriarch, retired educator with 40 years of service in Mumbai.' },
+  '10000000-0000-0000-0000-000000000002': { id: '10000000-0000-0000-0000-000000000002', treeId: '00000000-0000-0000-0000-000000000001', name: 'Meena Sharma', gender: 'female', dob: '1945-08-22', phone: '+919820445566', profession: 'Homemaker', location: 'Mumbai', bio: 'Family matriarch, renowned for preserving heirloom recipes and family lore.' },
+  '10000000-0000-0000-0000-000000000003': { id: '10000000-0000-0000-0000-000000000003', treeId: '00000000-0000-0000-0000-000000000001', name: 'Arjun Sharma', gender: 'male', dob: '1968-11-10', phone: '+919845012345', profession: 'Software Engineer', location: 'Bangalore', bio: 'Senior technology consultant, passionate genealogist and father of Dharun.' },
+  '10000000-0000-0000-0000-000000000004': { id: '10000000-0000-0000-0000-000000000004', treeId: '00000000-0000-0000-0000-000000000001', name: 'Priya Sharma', gender: 'female', dob: '1971-04-25', phone: '+919845987654', profession: 'Doctor', location: 'Bangalore', bio: 'Chief Medical Officer, mother of Dharun and Kavya.' },
+  '10000000-0000-0000-0000-000000000005': { id: '10000000-0000-0000-0000-000000000005', treeId: '00000000-0000-0000-0000-000000000001', name: 'Dharun SA', gender: 'male', dob: '2001-08-12', phone: '+919880011223', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the Vaerline family heirloom platform.' },
+  '10000000-0000-0000-0000-000000000006': { id: '10000000-0000-0000-0000-000000000006', treeId: '00000000-0000-0000-0000-000000000001', name: 'Kavya Sharma', gender: 'female', dob: '1998-02-09', phone: '+919822334455', profession: 'Student', location: 'Pune', bio: 'Master of Design student in Pune, sister of Dharun.' },
+  '10000000-0000-0000-0000-000000000007': { id: '10000000-0000-0000-0000-000000000007', treeId: '00000000-0000-0000-0000-000000000001', name: 'Sunita Kapoor', gender: 'female', dob: '1972-06-30', phone: '+919811223344', profession: 'Architect', location: 'Delhi', bio: 'Landscape architect based in New Delhi, aunt of Dharun.' },
+  '10000000-0000-0000-0000-000000000008': { id: '10000000-0000-0000-0000-000000000008', treeId: '00000000-0000-0000-0000-000000000001', name: 'Dev Kapoor', gender: 'male', dob: '1970-09-18', phone: '+919811556677', profession: 'Businessman', location: 'Delhi', bio: 'Entrepreneur and business leader in New Delhi, uncle of Dharun.' },
+  '10000000-0000-0000-0000-000000000009': { id: '10000000-0000-0000-0000-000000000009', treeId: '00000000-0000-0000-0000-000000000001', name: 'Rohan Kapoor', gender: 'male', dob: '1999-12-01', phone: '+919811998877', profession: 'Graphic Designer', location: 'Delhi', bio: 'Creative visual designer in Delhi, cousin of Dharun.' },
+  '10000000-0000-0000-0000-000000000010': { id: '10000000-0000-0000-0000-000000000010', treeId: '00000000-0000-0000-0000-000000000001', name: 'Ananya Menon', gender: 'female', dob: '1996-05-20', phone: '+919841223344', profession: 'Journalist', location: 'Chennai', bio: "Spouse of Dharun SA, investigative cultural journalist." },
 };
 
 const INITIAL_RELATIONSHIPS: Relationship[] = [
-  { id: '40000000-0000-0000-0000-000000000001', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000001', toPersonId: '10000000-0000-0000-0000-000000000002' },
+  { id: '40000000-0000-0000-0000-000000000001', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000001', toPersonId: '10000000-0000-0000-0000-000000000002', marriageDate: '1976-12-15' },
   { id: '40000000-0000-0000-0000-000000000002', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000001', toPersonId: '10000000-0000-0000-0000-000000000003' },
   { id: '40000000-0000-0000-0000-000000000003', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000002', toPersonId: '10000000-0000-0000-0000-000000000003' },
   { id: '40000000-0000-0000-0000-000000000004', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000001', toPersonId: '10000000-0000-0000-0000-000000000007' },
   { id: '40000000-0000-0000-0000-000000000005', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000002', toPersonId: '10000000-0000-0000-0000-000000000007' },
-  { id: '40000000-0000-0000-0000-000000000006', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000003', toPersonId: '10000000-0000-0000-0000-000000000004' },
+  { id: '40000000-0000-0000-0000-000000000006', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000003', toPersonId: '10000000-0000-0000-0000-000000000004', marriageDate: '1995-11-28' },
   { id: '40000000-0000-0000-0000-000000000007', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000003', toPersonId: '10000000-0000-0000-0000-000000000005' },
   { id: '40000000-0000-0000-0000-000000000008', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000004', toPersonId: '10000000-0000-0000-0000-000000000005' },
   { id: '40000000-0000-0000-0000-000000000009', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000003', toPersonId: '10000000-0000-0000-0000-000000000006' },
   { id: '40000000-0000-0000-0000-000000000010', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000004', toPersonId: '10000000-0000-0000-0000-000000000006' },
-  { id: '40000000-0000-0000-0000-000000000011', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000007', toPersonId: '10000000-0000-0000-0000-000000000008' },
+  { id: '40000000-0000-0000-0000-000000000011', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000007', toPersonId: '10000000-0000-0000-0000-000000000008', marriageDate: '1996-10-18' },
   { id: '40000000-0000-0000-0000-000000000012', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000007', toPersonId: '10000000-0000-0000-0000-000000000009' },
   { id: '40000000-0000-0000-0000-000000000013', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000008', toPersonId: '10000000-0000-0000-0000-000000000009' },
-  { id: '40000000-0000-0000-0000-000000000014', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000005', toPersonId: '10000000-0000-0000-0000-000000000010' },
+  { id: '40000000-0000-0000-0000-000000000014', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000005', toPersonId: '10000000-0000-0000-0000-000000000010', marriageDate: '2024-06-20' },
 ];
 
 buildSearchIndex(Object.values(INITIAL_PEOPLE));
@@ -93,8 +93,8 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
         supabase.from('relationships').select('*').eq('tree_id', treeId),
       ]);
 
-      if (pErr) console.warn('[Verline Cloud] fetchTree people notice:', pErr.message);
-      if (rErr) console.warn('[Verline Cloud] fetchTree rel notice:', rErr.message);
+      if (pErr) console.warn('[Vaerline Cloud] fetchTree people notice:', pErr.message);
+      if (rErr) console.warn('[Vaerline Cloud] fetchTree rel notice:', rErr.message);
 
       if (peopleData && peopleData.length > 0) {
         const people: Record<string, Person> = {};
@@ -106,6 +106,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
             gender: p.gender ?? 'unspecified',
             dob: p.dob ?? undefined,
             dod: p.dod ?? undefined,
+            phone: p.phone ?? undefined,
             photoUrl: p.photo_url ?? undefined,
             profession: p.profession ?? undefined,
             location: p.location ?? undefined,
@@ -119,6 +120,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
           type: r.type,
           fromPersonId: r.from_person_id,
           toPersonId: r.to_person_id,
+          marriageDate: r.marriage_date ?? undefined,
           isAdopted: r.is_adopted ?? false,
           isDivorced: r.is_divorced ?? false,
         }));
@@ -131,7 +133,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
         set({ loading: false });
       }
     } catch (err) {
-      console.warn('[Verline Cloud] fetchTree notice:', err);
+      console.warn('[Vaerline Cloud] fetchTree notice:', err);
       set({ error: String(err), loading: false });
     }
   },
@@ -223,6 +225,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
           gender: person.gender,
           dob: person.dob ?? null,
           dod: person.dod ?? null,
+          phone: person.phone ?? null,
           photo_url: person.photoUrl ?? null,
           profession: person.profession ?? null,
           location: person.location ?? null,
@@ -375,6 +378,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
           gender: updated.gender,
           dob: updated.dob ?? null,
           dod: updated.dod ?? null,
+          phone: updated.phone ?? null,
           photo_url: updated.photoUrl ?? null,
           profession: updated.profession ?? null,
           location: updated.location ?? null,
@@ -382,12 +386,12 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
         }).eq('id', id);
 
         if (error) {
-          console.error('[Verline Cloud] Error updating person in Supabase:', error.message);
+          console.error('[Vaerline Cloud] Error updating person in Supabase:', error.message);
         } else {
-          console.log('[Verline Cloud] Person updated in Supabase:', id, updated.name);
+          console.log('[Vaerline Cloud] Person updated in Supabase:', id, updated.name);
         }
       } catch (err) {
-        console.error('[Verline Cloud] Exception updating person in Supabase:', err);
+        console.error('[Vaerline Cloud] Exception updating person in Supabase:', err);
       }
     }
 
@@ -416,9 +420,9 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
     if (treeId && treeId !== DEMO_TREE_ID) {
       try {
         const { error } = await supabase.from('people').delete().eq('id', id);
-        if (error) console.error('[Verline Cloud] Error deleting person from Supabase:', error.message);
+        if (error) console.error('[Vaerline Cloud] Error deleting person from Supabase:', error.message);
       } catch (err) {
-        console.error('[Verline Cloud] Exception deleting person from Supabase:', err);
+        console.error('[Vaerline Cloud] Exception deleting person from Supabase:', err);
       }
     }
   },
@@ -441,7 +445,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
       meena: { id: 'meena', treeId, name: 'Meena Sharma', gender: 'female', dob: '1945-08-22', profession: 'Homemaker', location: 'Mumbai', bio: 'Family matriarch, renowned for preserving heirloom recipes and family lore.' },
       arjun: { id: 'arjun', treeId, name: 'Arjun Sharma', gender: 'male', dob: '1968-11-10', profession: 'Software Engineer', location: 'Bangalore', bio: 'Senior technology consultant, passionate genealogist and father of Dharun.' },
       priya: { id: 'priya', treeId, name: 'Priya Sharma', gender: 'female', dob: '1971-04-25', profession: 'Doctor', location: 'Bangalore', bio: 'Chief Medical Officer, mother of Dharun and Kavya.' },
-      dharun: { id: 'dharun', treeId, name: 'Dharun SA', gender: 'male', dob: '2001-08-11', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the VerLine family heirloom platform.' },
+      dharun: { id: 'dharun', treeId, name: 'Dharun SA', gender: 'male', dob: '2001-08-11', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the Vaerline family heirloom platform.' },
       kavya: { id: 'kavya', treeId, name: 'Kavya Sharma', gender: 'female', dob: '1998-02-09', profession: 'Student', location: 'Pune', bio: 'Master of Design student in Pune, sister of Dharun.' },
       sunita: { id: 'sunita', treeId, name: 'Sunita Kapoor', gender: 'female', dob: '1972-06-30', profession: 'Architect', location: 'Delhi', bio: 'Landscape architect based in New Delhi, aunt of Dharun.' },
       dev: { id: 'dev', treeId, name: 'Dev Kapoor', gender: 'male', dob: '1970-09-18', profession: 'Businessman', location: 'Delhi', bio: 'Entrepreneur and business leader in New Delhi, uncle of Dharun.' },
@@ -499,7 +503,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
         .limit(1);
 
       if (treeErr) {
-        console.warn('[Verline Cloud] Query trees notice:', treeErr.message);
+        console.warn('[Vaerline Cloud] Query trees notice:', treeErr.message);
         get().seedDemoData();
         return;
       }
@@ -511,7 +515,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
         activeTreeId = uuidv4();
         await supabase.from('trees').insert({
           id: activeTreeId,
-          name: 'VerLine Family Heirloom Tree',
+          name: 'Vaerline Family Heirloom Tree',
           description: 'Official lineage records and ancestral tree graph',
         });
 
@@ -521,7 +525,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
           { id: '10000000-0000-0000-0000-000000000002', tree_id: activeTreeId, name: 'Meena Sharma', gender: 'female', dob: '1945-08-22', profession: 'Homemaker', location: 'Mumbai', bio: 'Family matriarch, renowned for preserving heirloom recipes and family lore.' },
           { id: '10000000-0000-0000-0000-000000000003', tree_id: activeTreeId, name: 'Arjun Sharma', gender: 'male', dob: '1968-11-10', profession: 'Software Engineer', location: 'Bangalore', bio: 'Senior technology consultant, passionate genealogist and father of Dharun.' },
           { id: '10000000-0000-0000-0000-000000000004', tree_id: activeTreeId, name: 'Priya Sharma', gender: 'female', dob: '1971-04-25', profession: 'Doctor', location: 'Bangalore', bio: 'Chief Medical Officer, mother of Dharun and Kavya.' },
-          { id: '10000000-0000-0000-0000-000000000005', tree_id: activeTreeId, name: 'Dharun SA', gender: 'male', dob: '2001-08-11', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the VerLine family heirloom platform.' },
+          { id: '10000000-0000-0000-0000-000000000005', tree_id: activeTreeId, name: 'Dharun SA', gender: 'male', dob: '2001-08-11', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the Vaerline family heirloom platform.' },
           { id: '10000000-0000-0000-0000-000000000006', tree_id: activeTreeId, name: 'Kavya Sharma', gender: 'female', dob: '1998-02-09', profession: 'Student', location: 'Pune', bio: 'Master of Design student in Pune, sister of Dharun.' },
           { id: '10000000-0000-0000-0000-000000000007', tree_id: activeTreeId, name: 'Sunita Kapoor', gender: 'female', dob: '1972-06-30', profession: 'Architect', location: 'Delhi', bio: 'Landscape architect based in New Delhi, aunt of Dharun.' },
           { id: '10000000-0000-0000-0000-000000000008', tree_id: activeTreeId, name: 'Dev Kapoor', gender: 'male', dob: '1970-09-18', profession: 'Businessman', location: 'Delhi', bio: 'Entrepreneur and business leader in New Delhi, uncle of Dharun.' },
@@ -556,7 +560,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
 
       await get().fetchTree(activeTreeId);
     } catch (err) {
-      console.error('[Verline Cloud] Error initializing tree:', err);
+      console.error('[Vaerline Cloud] Error initializing tree:', err);
       get().seedDemoData();
     }
   },

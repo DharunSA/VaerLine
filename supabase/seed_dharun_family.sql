@@ -1,5 +1,5 @@
 -- ============================================================
--- VerLine: Seed Dharun SA Family Tree & Heritage Graph
+-- Vaerline: Seed Dharun SA Family Tree & Heritage Graph
 -- Run this in your Supabase SQL Editor:
 -- https://supabase.com/dashboard/project/stoqwlzsaeujshcphsgw/sql
 -- ============================================================
@@ -63,7 +63,7 @@ values
     '2001-08-11',
     'Software Architect',
     'Bangalore',
-    'Software Architect and creator of the VerLine family heirloom platform.'
+    'Software Architect and creator of the Vaerline family heirloom platform.'
   ),
   (
     '10000000-0000-0000-0000-000000000006',

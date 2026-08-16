@@ -61,7 +61,7 @@ function AppLayout() {
                 className="font-serif"
                 style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-cream)', lineHeight: 1.1, letterSpacing: '-0.01em' }}
               >
-                VerLine
+                Vaerline
               </div>
               <div style={{ fontSize: 11, color: 'var(--color-warm-gray)', letterSpacing: '0.04em', marginTop: 2 }}>
                 Your roots, in one line.

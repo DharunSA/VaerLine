@@ -274,7 +274,7 @@ export const useForumStore = create<ForumStore>((set, get) => ({
         set({ posts: SEED_FORUM_POSTS, isLoading: false });
       }
     } catch (err: unknown) {
-      console.warn('[Verline Forum] Supabase query notice:', err);
+      console.warn('[Vaerline Forum] Supabase query notice:', err);
       set({ posts: SEED_FORUM_POSTS, isLoading: false });
     }
   },
@@ -314,7 +314,7 @@ export const useForumStore = create<ForumStore>((set, get) => ({
         }));
       }
     } catch (err) {
-      console.warn('[Verline Forum] Fetch comments notice:', err);
+      console.warn('[Vaerline Forum] Fetch comments notice:', err);
     }
   },
 
@@ -365,7 +365,7 @@ export const useForumStore = create<ForumStore>((set, get) => ({
           });
         }
       } catch (err) {
-        console.error('[Verline Forum] Failed to persist post to Supabase:', err);
+        console.error('[Vaerline Forum] Failed to persist post to Supabase:', err);
       }
     }
 
@@ -408,7 +408,7 @@ export const useForumStore = create<ForumStore>((set, get) => ({
           parent_comment_id: parentCommentId || null,
         });
       } catch (err) {
-        console.error('[Verline Forum] Failed to persist comment to Supabase:', err);
+        console.error('[Vaerline Forum] Failed to persist comment to Supabase:', err);
       }
     }
   },
@@ -447,7 +447,7 @@ export const useForumStore = create<ForumStore>((set, get) => ({
             vote_type: 1,
           });
           if (insErr && insErr.code !== '23505') {
-            console.error('[Verline Forum] Vote upsert notice:', insErr.message);
+            console.error('[Vaerline Forum] Vote upsert notice:', insErr.message);
           }
         } else {
           const { error: delErr } = await supabase
@@ -456,7 +456,7 @@ export const useForumStore = create<ForumStore>((set, get) => ({
             .eq('post_id', postId)
             .eq('user_id', activeUserId);
           if (delErr) {
-            console.error('[Verline Forum] Vote delete notice:', delErr.message);
+            console.error('[Vaerline Forum] Vote delete notice:', delErr.message);
           }
         }
 
@@ -465,7 +465,7 @@ export const useForumStore = create<ForumStore>((set, get) => ({
           .update({ upvotes_count: newCount })
           .eq('id', postId);
       } catch (err) {
-        console.warn('[Verline Forum] Upvote update notice:', err);
+        console.warn('[Vaerline Forum] Upvote update notice:', err);
       }
     }
   },
@@ -489,7 +489,7 @@ export const useForumStore = create<ForumStore>((set, get) => ({
           .update({ is_solved: newSolved })
           .eq('id', postId);
       } catch (err) {
-        console.warn('[Verline Forum] Toggle solved notice:', err);
+        console.warn('[Vaerline Forum] Toggle solved notice:', err);
       }
     }
   },

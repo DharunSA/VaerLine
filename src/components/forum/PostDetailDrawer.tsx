@@ -492,7 +492,7 @@ export default function PostDetailDrawer() {
                 value={newCommentText}
                 onChange={e => setNewCommentText(e.target.value)}
                 placeholder="Write a response or share historical context…"
-                className="verline-input"
+                className="vaerline-input"
                 style={{ flex: 1, padding: '10px 14px' }}
               />
               <button

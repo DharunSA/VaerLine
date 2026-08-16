@@ -1,5 +1,5 @@
 -- ============================================================
--- Fix RLS Policies for VerLine Collaboration & Live Updates
+-- Fix RLS Policies for Vaerline Collaboration & Live Updates
 -- Run this in your Supabase SQL Editor:
 -- https://supabase.com/dashboard/project/stoqwlzsaeujshcphsgw/sql
 -- ============================================================

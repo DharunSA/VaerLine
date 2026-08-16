@@ -252,7 +252,7 @@ export default function Forum() {
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as typeof sortBy)}
-            className="verline-input"
+            className="vaerline-input"
             style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
           >
             <option value="newest">🕒 Most Recent</option>
