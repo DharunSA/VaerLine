@@ -30,9 +30,10 @@ interface PeopleStore {
   deletePerson: (id: string) => Promise<void>;
   selectPerson: (id: string | null) => void;
 
-  // Cloud initialization & demo fallback
+  // Cloud user initialization & reset
   initializeTree: () => Promise<void>;
-  seedDemoData: () => void;
+  initializeUserTree: (userId: string, userName?: string) => Promise<void>;
+  clearTree: () => void;
 }
 
 /** Recompute the graph whenever relationships change */
@@ -40,46 +41,12 @@ function recomputeGraph(rels: Relationship[]): Graph {
   return buildGraph(rels);
 }
 
-const DEMO_TREE_ID = 'demo-tree';
-
-const INITIAL_PEOPLE: Record<string, Person> = {
-  '10000000-0000-0000-0000-000000000001': { id: '10000000-0000-0000-0000-000000000001', treeId: '00000000-0000-0000-0000-000000000001', name: 'Raj Sharma', gender: 'male', dob: '1942-03-15', phone: '+919820112233', profession: 'Retired Teacher', location: 'Mumbai', bio: 'Family patriarch, retired educator with 40 years of service in Mumbai.' },
-  '10000000-0000-0000-0000-000000000002': { id: '10000000-0000-0000-0000-000000000002', treeId: '00000000-0000-0000-0000-000000000001', name: 'Meena Sharma', gender: 'female', dob: '1945-08-22', phone: '+919820445566', profession: 'Homemaker', location: 'Mumbai', bio: 'Family matriarch, renowned for preserving heirloom recipes and family lore.' },
-  '10000000-0000-0000-0000-000000000003': { id: '10000000-0000-0000-0000-000000000003', treeId: '00000000-0000-0000-0000-000000000001', name: 'Arjun Sharma', gender: 'male', dob: '1968-11-10', phone: '+919845012345', profession: 'Software Engineer', location: 'Bangalore', bio: 'Senior technology consultant, passionate genealogist and father of Dharun.' },
-  '10000000-0000-0000-0000-000000000004': { id: '10000000-0000-0000-0000-000000000004', treeId: '00000000-0000-0000-0000-000000000001', name: 'Priya Sharma', gender: 'female', dob: '1971-04-25', phone: '+919845987654', profession: 'Doctor', location: 'Bangalore', bio: 'Chief Medical Officer, mother of Dharun and Kavya.' },
-  '10000000-0000-0000-0000-000000000005': { id: '10000000-0000-0000-0000-000000000005', treeId: '00000000-0000-0000-0000-000000000001', name: 'Dharun SA', gender: 'male', dob: '2001-08-12', phone: '+919880011223', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the Vaerline family heirloom platform.' },
-  '10000000-0000-0000-0000-000000000006': { id: '10000000-0000-0000-0000-000000000006', treeId: '00000000-0000-0000-0000-000000000001', name: 'Kavya Sharma', gender: 'female', dob: '1998-02-09', phone: '+919822334455', profession: 'Student', location: 'Pune', bio: 'Master of Design student in Pune, sister of Dharun.' },
-  '10000000-0000-0000-0000-000000000007': { id: '10000000-0000-0000-0000-000000000007', treeId: '00000000-0000-0000-0000-000000000001', name: 'Sunita Kapoor', gender: 'female', dob: '1972-06-30', phone: '+919811223344', profession: 'Architect', location: 'Delhi', bio: 'Landscape architect based in New Delhi, aunt of Dharun.' },
-  '10000000-0000-0000-0000-000000000008': { id: '10000000-0000-0000-0000-000000000008', treeId: '00000000-0000-0000-0000-000000000001', name: 'Dev Kapoor', gender: 'male', dob: '1970-09-18', phone: '+919811556677', profession: 'Businessman', location: 'Delhi', bio: 'Entrepreneur and business leader in New Delhi, uncle of Dharun.' },
-  '10000000-0000-0000-0000-000000000009': { id: '10000000-0000-0000-0000-000000000009', treeId: '00000000-0000-0000-0000-000000000001', name: 'Rohan Kapoor', gender: 'male', dob: '1999-12-01', phone: '+919811998877', profession: 'Graphic Designer', location: 'Delhi', bio: 'Creative visual designer in Delhi, cousin of Dharun.' },
-  '10000000-0000-0000-0000-000000000010': { id: '10000000-0000-0000-0000-000000000010', treeId: '00000000-0000-0000-0000-000000000001', name: 'Ananya Menon', gender: 'female', dob: '1996-05-20', phone: '+919841223344', profession: 'Journalist', location: 'Chennai', bio: "Spouse of Dharun SA, investigative cultural journalist." },
-};
-
-const INITIAL_RELATIONSHIPS: Relationship[] = [
-  { id: '40000000-0000-0000-0000-000000000001', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000001', toPersonId: '10000000-0000-0000-0000-000000000002', marriageDate: '1976-12-15' },
-  { id: '40000000-0000-0000-0000-000000000002', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000001', toPersonId: '10000000-0000-0000-0000-000000000003' },
-  { id: '40000000-0000-0000-0000-000000000003', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000002', toPersonId: '10000000-0000-0000-0000-000000000003' },
-  { id: '40000000-0000-0000-0000-000000000004', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000001', toPersonId: '10000000-0000-0000-0000-000000000007' },
-  { id: '40000000-0000-0000-0000-000000000005', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000002', toPersonId: '10000000-0000-0000-0000-000000000007' },
-  { id: '40000000-0000-0000-0000-000000000006', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000003', toPersonId: '10000000-0000-0000-0000-000000000004', marriageDate: '1995-11-28' },
-  { id: '40000000-0000-0000-0000-000000000007', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000003', toPersonId: '10000000-0000-0000-0000-000000000005' },
-  { id: '40000000-0000-0000-0000-000000000008', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000004', toPersonId: '10000000-0000-0000-0000-000000000005' },
-  { id: '40000000-0000-0000-0000-000000000009', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000003', toPersonId: '10000000-0000-0000-0000-000000000006' },
-  { id: '40000000-0000-0000-0000-000000000010', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000004', toPersonId: '10000000-0000-0000-0000-000000000006' },
-  { id: '40000000-0000-0000-0000-000000000011', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000007', toPersonId: '10000000-0000-0000-0000-000000000008', marriageDate: '1996-10-18' },
-  { id: '40000000-0000-0000-0000-000000000012', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000007', toPersonId: '10000000-0000-0000-0000-000000000009' },
-  { id: '40000000-0000-0000-0000-000000000013', treeId: '00000000-0000-0000-0000-000000000001', type: 'PARENT_OF', fromPersonId: '10000000-0000-0000-0000-000000000008', toPersonId: '10000000-0000-0000-0000-000000000009' },
-  { id: '40000000-0000-0000-0000-000000000014', treeId: '00000000-0000-0000-0000-000000000001', type: 'SPOUSE_OF', fromPersonId: '10000000-0000-0000-0000-000000000005', toPersonId: '10000000-0000-0000-0000-000000000010', marriageDate: '2024-06-20' },
-];
-
-buildSearchIndex(Object.values(INITIAL_PEOPLE));
-
 export const usePeopleStore = create<PeopleStore>((set, get) => ({
-  treeId: '00000000-0000-0000-0000-000000000001',
-  people: INITIAL_PEOPLE,
-  relationships: INITIAL_RELATIONSHIPS,
-  graph: buildGraph(INITIAL_RELATIONSHIPS),
-  selectedPersonId: '10000000-0000-0000-0000-000000000005',
+  treeId: null,
+  people: {},
+  relationships: [],
+  graph: buildGraph([]),
+  selectedPersonId: null,
   loading: false,
   error: null,
 
@@ -145,7 +112,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
     const personId = uuidv4();
     const person: Person = {
       id: personId,
-      treeId: treeId ?? DEMO_TREE_ID,
+      treeId: treeId ?? '',
       ...newPerson,
     };
 
@@ -163,7 +130,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
       edgeSet.add(key);
       newRelationships.push({
         id: uuidv4(),
-        treeId: treeId ?? DEMO_TREE_ID,
+        treeId: treeId ?? '',
         type,
         fromPersonId: from,
         toPersonId: to,
@@ -216,7 +183,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
     set({ people: updatedPeople, relationships: updatedRelationships, graph });
 
     // Persist to Supabase if connected
-    if (treeId && treeId !== DEMO_TREE_ID) {
+    if (treeId) {
       try {
         await supabase.from('people').insert({
           id: personId,
@@ -268,7 +235,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
       edgeSet.add(key);
       newRelationships.push({
         id: uuidv4(),
-        treeId: treeId ?? DEMO_TREE_ID,
+        treeId: treeId ?? '',
         type: relType,
         fromPersonId: from,
         toPersonId: to,
@@ -309,7 +276,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
     const newGraph = recomputeGraph(updatedRels);
     set({ relationships: updatedRels, graph: newGraph });
 
-    if (treeId && treeId !== DEMO_TREE_ID && newRelationships.length > 0) {
+    if (treeId && newRelationships.length > 0) {
       try {
         await supabase.from('relationships').insert(
           newRelationships.map(r => ({
@@ -339,7 +306,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
     const graph = recomputeGraph(updatedRels);
     set({ relationships: updatedRels, graph });
 
-    if (treeId && treeId !== DEMO_TREE_ID) {
+    if (treeId) {
       await supabase.from('relationships').update(patch).eq('id', relationshipId);
     }
   },
@@ -350,7 +317,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
     const graph = recomputeGraph(updatedRels);
     set({ relationships: updatedRels, graph });
 
-    if (treeId && treeId !== DEMO_TREE_ID) {
+    if (treeId) {
       await supabase.from('relationships').delete().eq('id', relationshipId);
     }
   },
@@ -369,9 +336,12 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
     };
     const updatedPeople = { ...people, [id]: updated };
     buildSearchIndex(Object.values(updatedPeople));
+
+    // Only recompute graph if structural data changed (relationships are unchanged here,
+    // so skip the redundant buildGraph call for name/bio/photo edits)
     set({ people: updatedPeople });
 
-    if (treeId && treeId !== DEMO_TREE_ID) {
+    if (treeId) {
       try {
         const { error } = await supabase.from('people').update({
           name: updated.name,
@@ -395,9 +365,11 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
       }
     }
 
-    // Recompute graph (no structural change but keep consistent)
-    const graph = recomputeGraph(relationships);
-    set({ graph });
+    // Only recompute graph if relationships exist (structural integrity)
+    if (relationships.length > 0) {
+      const graph = recomputeGraph(relationships);
+      set({ graph });
+    }
   },
 
   deletePerson: async (id) => {
@@ -417,7 +389,7 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
       selectedPersonId: null,
     });
 
-    if (treeId && treeId !== DEMO_TREE_ID) {
+    if (treeId) {
       try {
         const { error } = await supabase.from('people').delete().eq('id', id);
         if (error) console.error('[Vaerline Cloud] Error deleting person from Supabase:', error.message);
@@ -429,73 +401,120 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
 
   selectPerson: (id) => set({ selectedPersonId: id }),
 
-  seedDemoData: () => {
-    const treeId = DEMO_TREE_ID;
-
-    // Build a demo family:
-    // Raj (grandpa) + Meena (grandma)
-    //   ├─ Arjun (dad) + Priya (mom)
-    //   │   ├─ Aditya (me) + Ananya (spouse)
-    //   │   └─ Kavya (sister)
-    //   └─ Sunita (aunt) + Dev (uncle-in-law)
-    //       └─ Rohan (cousin)
-
-    const people: Record<string, Person> = {
-      raj: { id: 'raj', treeId, name: 'Raj Sharma', gender: 'male', dob: '1942-03-15', profession: 'Retired Teacher', location: 'Mumbai', bio: 'Family patriarch, retired educator with 40 years of service in Mumbai.' },
-      meena: { id: 'meena', treeId, name: 'Meena Sharma', gender: 'female', dob: '1945-08-22', profession: 'Homemaker', location: 'Mumbai', bio: 'Family matriarch, renowned for preserving heirloom recipes and family lore.' },
-      arjun: { id: 'arjun', treeId, name: 'Arjun Sharma', gender: 'male', dob: '1968-11-10', profession: 'Software Engineer', location: 'Bangalore', bio: 'Senior technology consultant, passionate genealogist and father of Dharun.' },
-      priya: { id: 'priya', treeId, name: 'Priya Sharma', gender: 'female', dob: '1971-04-25', profession: 'Doctor', location: 'Bangalore', bio: 'Chief Medical Officer, mother of Dharun and Kavya.' },
-      dharun: { id: 'dharun', treeId, name: 'Dharun SA', gender: 'male', dob: '2001-08-11', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the Vaerline family heirloom platform.' },
-      kavya: { id: 'kavya', treeId, name: 'Kavya Sharma', gender: 'female', dob: '1998-02-09', profession: 'Student', location: 'Pune', bio: 'Master of Design student in Pune, sister of Dharun.' },
-      sunita: { id: 'sunita', treeId, name: 'Sunita Kapoor', gender: 'female', dob: '1972-06-30', profession: 'Architect', location: 'Delhi', bio: 'Landscape architect based in New Delhi, aunt of Dharun.' },
-      dev: { id: 'dev', treeId, name: 'Dev Kapoor', gender: 'male', dob: '1970-09-18', profession: 'Businessman', location: 'Delhi', bio: 'Entrepreneur and business leader in New Delhi, uncle of Dharun.' },
-      rohan: { id: 'rohan', treeId, name: 'Rohan Kapoor', gender: 'male', dob: '1999-12-01', profession: 'Graphic Designer', location: 'Delhi', bio: 'Creative visual designer in Delhi, cousin of Dharun.' },
-      ananya: { id: 'ananya', treeId, name: 'Ananya Menon', gender: 'female', dob: '1996-05-20', profession: 'Journalist', location: 'Chennai', bio: "Spouse of Dharun SA, investigative cultural journalist." },
-    };
-
-    const relationships: Relationship[] = [
-      { id: 'r1', treeId, type: 'SPOUSE_OF', fromPersonId: 'raj', toPersonId: 'meena' },
-      { id: 'r2', treeId, type: 'PARENT_OF', fromPersonId: 'raj', toPersonId: 'arjun' },
-      { id: 'r3', treeId, type: 'PARENT_OF', fromPersonId: 'meena', toPersonId: 'arjun' },
-      { id: 'r4', treeId, type: 'PARENT_OF', fromPersonId: 'raj', toPersonId: 'sunita' },
-      { id: 'r5', treeId, type: 'PARENT_OF', fromPersonId: 'meena', toPersonId: 'sunita' },
-      { id: 'r6', treeId, type: 'SPOUSE_OF', fromPersonId: 'arjun', toPersonId: 'priya' },
-      { id: 'r7', treeId, type: 'PARENT_OF', fromPersonId: 'arjun', toPersonId: 'dharun' },
-      { id: 'r8', treeId, type: 'PARENT_OF', fromPersonId: 'priya', toPersonId: 'dharun' },
-      { id: 'r9', treeId, type: 'PARENT_OF', fromPersonId: 'arjun', toPersonId: 'kavya' },
-      { id: 'r10', treeId, type: 'PARENT_OF', fromPersonId: 'priya', toPersonId: 'kavya' },
-      { id: 'r11', treeId, type: 'SPOUSE_OF', fromPersonId: 'sunita', toPersonId: 'dev' },
-      { id: 'r12', treeId, type: 'PARENT_OF', fromPersonId: 'sunita', toPersonId: 'rohan' },
-      { id: 'r13', treeId, type: 'PARENT_OF', fromPersonId: 'dev', toPersonId: 'rohan' },
-      { id: 'r14', treeId, type: 'SPOUSE_OF', fromPersonId: 'dharun', toPersonId: 'ananya' },
-    ];
-
-    const graph = buildGraph(relationships);
-    buildSearchIndex(Object.values(people));
-
+  clearTree: () => {
     set({
-      treeId,
-      people,
-      relationships,
-      graph,
-      selectedPersonId: 'dharun',
+      treeId: null,
+      people: {},
+      relationships: [],
+      graph: buildGraph([]),
+      selectedPersonId: null,
+      loading: false,
+      error: null,
     });
   },
 
-  initializeTree: async () => {
-    const url = import.meta.env.VITE_SUPABASE_URL;
-    const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    const isConfigured = Boolean(url && key && !url.includes('placeholder'));
+  initializeUserTree: async (userId: string, userName?: string) => {
+    try {
+      // Guard against double-initialization (e.g. multiple onAuthStateChange fires)
+      const currentTreeId = get().treeId;
+      if (currentTreeId) {
+        console.log('[Vaerline Cloud] Tree already initialized:', currentTreeId);
+        return;
+      }
 
-    if (!isConfigured) {
-      get().seedDemoData();
-      return;
+      set({ loading: true, error: null });
+
+      // 1. Check if this user is a MEMBER of someone else's tree via tree_members
+      const { data: memberRows } = await supabase
+        .from('tree_members')
+        .select('tree_id, role')
+        .eq('user_id', userId)
+        .limit(1);
+
+      if (memberRows && memberRows.length > 0) {
+        // This user was invited — load the shared tree
+        const sharedTreeId = memberRows[0].tree_id;
+        console.log('[Vaerline Cloud] Member user found — loading shared tree:', sharedTreeId);
+        await get().fetchTree(sharedTreeId);
+        return;
+      }
+
+      // 2. Look for a tree owned by this specific user in Supabase
+      const { data: userTrees, error: treeErr } = await supabase
+        .from('trees')
+        .select('*')
+        .eq('owner_id', userId)
+        .order('created_at', { ascending: true })
+        .limit(1);
+
+      if (treeErr) {
+        console.warn('[Vaerline Cloud] Query user trees notice:', treeErr.message);
+      }
+
+      if (userTrees && userTrees.length > 0) {
+        // Existing tree found for this user
+        const activeTreeId = userTrees[0].id;
+        await get().fetchTree(activeTreeId);
+      } else {
+        // Brand new user: Create a private tree and root person in Supabase
+        const activeTreeId = uuidv4();
+        const rootPersonId = uuidv4();
+        const displayName = userName && userName.trim() !== '' ? userName : 'Family Creator';
+
+        const { error: insertTreeErr } = await supabase.from('trees').insert({
+          id: activeTreeId,
+          name: `${displayName}'s Family Lineage`,
+          owner_id: userId,
+        });
+
+        if (insertTreeErr) {
+          console.warn('[Vaerline Cloud] Error creating user tree:', insertTreeErr.message);
+        }
+
+        const rootPerson: Person = {
+          id: rootPersonId,
+          treeId: activeTreeId,
+          name: displayName,
+          gender: 'unspecified',
+          bio: 'Root member of this family lineage.',
+        };
+
+        const { error: insertPersonErr } = await supabase.from('people').insert({
+          id: rootPersonId,
+          tree_id: activeTreeId,
+          name: rootPerson.name,
+          gender: rootPerson.gender,
+          bio: rootPerson.bio,
+        });
+
+        if (insertPersonErr) {
+          console.warn('[Vaerline Cloud] Error creating root person:', insertPersonErr.message);
+        }
+
+        const people: Record<string, Person> = { [rootPersonId]: rootPerson };
+        const relationships: Relationship[] = [];
+        const graph = buildGraph(relationships);
+        buildSearchIndex([rootPerson]);
+
+        set({
+          treeId: activeTreeId,
+          people,
+          relationships,
+          graph,
+          selectedPersonId: rootPersonId,
+          loading: false,
+        });
+      }
+    } catch (err) {
+      console.error('[Vaerline Cloud] Error in initializeUserTree:', err);
+      set({ error: String(err), loading: false });
     }
+  },
 
+  initializeTree: async () => {
     try {
       set({ loading: true, error: null });
 
-      // 1. Check if tree already exists in Supabase
       const { data: trees, error: treeErr } = await supabase
         .from('trees')
         .select('*')
@@ -504,64 +523,18 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
 
       if (treeErr) {
         console.warn('[Vaerline Cloud] Query trees notice:', treeErr.message);
-        get().seedDemoData();
+        set({ loading: false });
         return;
       }
 
-      let activeTreeId: string;
-
-      if (!trees || trees.length === 0) {
-        // 2. First-time cloud setup: Seed tree into Supabase
-        activeTreeId = uuidv4();
-        await supabase.from('trees').insert({
-          id: activeTreeId,
-          name: 'Vaerline Family Heirloom Tree',
-          description: 'Official lineage records and ancestral tree graph',
-        });
-
-        // Insert initial people into Supabase
-        const initialPeople = [
-          { id: '10000000-0000-0000-0000-000000000001', tree_id: activeTreeId, name: 'Raj Sharma', gender: 'male', dob: '1942-03-15', profession: 'Retired Teacher', location: 'Mumbai', bio: 'Family patriarch, retired educator with 40 years of service in Mumbai.' },
-          { id: '10000000-0000-0000-0000-000000000002', tree_id: activeTreeId, name: 'Meena Sharma', gender: 'female', dob: '1945-08-22', profession: 'Homemaker', location: 'Mumbai', bio: 'Family matriarch, renowned for preserving heirloom recipes and family lore.' },
-          { id: '10000000-0000-0000-0000-000000000003', tree_id: activeTreeId, name: 'Arjun Sharma', gender: 'male', dob: '1968-11-10', profession: 'Software Engineer', location: 'Bangalore', bio: 'Senior technology consultant, passionate genealogist and father of Dharun.' },
-          { id: '10000000-0000-0000-0000-000000000004', tree_id: activeTreeId, name: 'Priya Sharma', gender: 'female', dob: '1971-04-25', profession: 'Doctor', location: 'Bangalore', bio: 'Chief Medical Officer, mother of Dharun and Kavya.' },
-          { id: '10000000-0000-0000-0000-000000000005', tree_id: activeTreeId, name: 'Dharun SA', gender: 'male', dob: '2001-08-11', profession: 'Software Architect', location: 'Bangalore', bio: 'Software Architect and creator of the Vaerline family heirloom platform.' },
-          { id: '10000000-0000-0000-0000-000000000006', tree_id: activeTreeId, name: 'Kavya Sharma', gender: 'female', dob: '1998-02-09', profession: 'Student', location: 'Pune', bio: 'Master of Design student in Pune, sister of Dharun.' },
-          { id: '10000000-0000-0000-0000-000000000007', tree_id: activeTreeId, name: 'Sunita Kapoor', gender: 'female', dob: '1972-06-30', profession: 'Architect', location: 'Delhi', bio: 'Landscape architect based in New Delhi, aunt of Dharun.' },
-          { id: '10000000-0000-0000-0000-000000000008', tree_id: activeTreeId, name: 'Dev Kapoor', gender: 'male', dob: '1970-09-18', profession: 'Businessman', location: 'Delhi', bio: 'Entrepreneur and business leader in New Delhi, uncle of Dharun.' },
-          { id: '10000000-0000-0000-0000-000000000009', tree_id: activeTreeId, name: 'Rohan Kapoor', gender: 'male', dob: '1999-12-01', profession: 'Graphic Designer', location: 'Delhi', bio: 'Creative visual designer in Delhi, cousin of Dharun.' },
-          { id: '10000000-0000-0000-0000-000000000010', tree_id: activeTreeId, name: 'Ananya Menon', gender: 'female', dob: '1996-05-20', profession: 'Journalist', location: 'Chennai', bio: "Spouse of Dharun SA, investigative cultural journalist." },
-        ];
-
-        await supabase.from('people').insert(initialPeople);
-
-        // Insert initial relationships into Supabase
-        const initialRels = [
-          { id: '40000000-0000-0000-0000-000000000001', tree_id: activeTreeId, type: 'SPOUSE_OF', from_person_id: '10000000-0000-0000-0000-000000000001', to_person_id: '10000000-0000-0000-0000-000000000002' },
-          { id: '40000000-0000-0000-0000-000000000002', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000001', to_person_id: '10000000-0000-0000-0000-000000000003' },
-          { id: '40000000-0000-0000-0000-000000000003', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000002', to_person_id: '10000000-0000-0000-0000-000000000003' },
-          { id: '40000000-0000-0000-0000-000000000004', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000001', to_person_id: '10000000-0000-0000-0000-000000000007' },
-          { id: '40000000-0000-0000-0000-000000000005', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000002', to_person_id: '10000000-0000-0000-0000-000000000007' },
-          { id: '40000000-0000-0000-0000-000000000006', tree_id: activeTreeId, type: 'SPOUSE_OF', from_person_id: '10000000-0000-0000-0000-000000000003', to_person_id: '10000000-0000-0000-0000-000000000004' },
-          { id: '40000000-0000-0000-0000-000000000007', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000003', to_person_id: '10000000-0000-0000-0000-000000000005' },
-          { id: '40000000-0000-0000-0000-000000000008', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000004', to_person_id: '10000000-0000-0000-0000-000000000005' },
-          { id: '40000000-0000-0000-0000-000000000009', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000003', to_person_id: '10000000-0000-0000-0000-000000000006' },
-          { id: '40000000-0000-0000-0000-000000000010', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000004', to_person_id: '10000000-0000-0000-0000-000000000006' },
-          { id: '40000000-0000-0000-0000-000000000011', tree_id: activeTreeId, type: 'SPOUSE_OF', from_person_id: '10000000-0000-0000-0000-000000000007', to_person_id: '10000000-0000-0000-0000-000000000008' },
-          { id: '40000000-0000-0000-0000-000000000012', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000007', to_person_id: '10000000-0000-0000-0000-000000000009' },
-          { id: '40000000-0000-0000-0000-000000000013', tree_id: activeTreeId, type: 'PARENT_OF', from_person_id: '10000000-0000-0000-0000-000000000008', to_person_id: '10000000-0000-0000-0000-000000000009' },
-          { id: '40000000-0000-0000-0000-000000000014', tree_id: activeTreeId, type: 'SPOUSE_OF', from_person_id: '10000000-0000-0000-0000-000000000005', to_person_id: '10000000-0000-0000-0000-000000000010' },
-        ];
-
-        await supabase.from('relationships').insert(initialRels);
+      if (trees && trees.length > 0) {
+        await get().fetchTree(trees[0].id);
       } else {
-        activeTreeId = trees[0].id;
+        set({ loading: false });
       }
-
-      await get().fetchTree(activeTreeId);
     } catch (err) {
       console.error('[Vaerline Cloud] Error initializing tree:', err);
-      get().seedDemoData();
+      set({ loading: false });
     }
   },
 }));
