@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Sparkles } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
 
@@ -18,7 +18,6 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const signIn = useAuthStore(s => s.signIn);
   const setAuthView = useAuthStore(s => s.setAuthView);
-  const loginAsDemoUser = useAuthStore(s => s.loginAsDemoUser);
   const isLoading = useAuthStore(s => s.isLoading);
   const error = useAuthStore(s => s.error);
   const clearError = useAuthStore(s => s.clearError);

@@ -1,0 +1,214 @@
+/* ─── Google Stitch Digital Heirloom Design System ─────────────────────────── */
+
+.stitch-root {
+  background-color: #0c0e10;
+  color: #e2e2e5;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+.stitch-display-font {
+  font-family: 'Hanken Grotesk', 'Cormorant Garamond', serif;
+}
+
+.stitch-gold-text {
+  background: linear-gradient(135deg, #f2ca50 0%, #d4af37 50%, #ffe2ab 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Floating Glass Header */
+.stitch-nav {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 1200px;
+  background: rgba(12, 14, 16, 0.75);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 9999px;
+  padding: 12px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.stitch-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.stitch-nav-link {
+  color: #d0c5af;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  transition: all 150ms ease;
+}
+
+.stitch-nav-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Buttons */
+.stitch-btn-primary {
+  background: linear-gradient(135deg, #f2ca50, #d4af37);
+  color: #121416;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(242, 202, 80, 0.35);
+  transition: all 180ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.stitch-btn-primary:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(242, 202, 80, 0.45);
+}
+
+.stitch-btn-primary:active {
+  transform: translateY(0);
+}
+
+.stitch-btn-glass {
+  background: rgba(20, 22, 24, 0.6);
+  color: #f2ca50;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  cursor: pointer;
+  backdrop-filter: blur(20px);
+  transition: all 180ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.stitch-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #f2ca50;
+  color: #ffffff;
+}
+
+/* Glass Panels */
+.stitch-glass-card {
+  background: rgba(18, 20, 22, 0.72);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  border-radius: 24px;
+}
+
+/* Bento Grid */
+.stitch-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .stitch-bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .stitch-nav-links {
+    display: none;
+  }
+}
+
+.stitch-bento-card-span2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 900px) {
+  .stitch-bento-card-span2 {
+    grid-column: span 1;
+  }
+}
+
+/* Floating Label Inputs for Auth */
+.stitch-floating-box {
+  position: relative;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.stitch-floating-box input {
+  width: 100%;
+  padding: 22px 20px 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 200ms, box-shadow 200ms;
+}
+
+.stitch-floating-box input:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.stitch-floating-box label {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 14px;
+  pointer-events: none;
+  transition: all 180ms ease;
+}
+
+.stitch-floating-box input:focus + label,
+.stitch-floating-box input:not(:placeholder-shown) + label {
+  top: 13px;
+  font-size: 11px;
+  color: #d4af37;
+  font-weight: 500;
+}
+
+/* Pill Badge */
+.stitch-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #f2ca50;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}

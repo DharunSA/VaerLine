@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { X, MapPin, Briefcase, TreePine, Edit3, Trash2, AlertTriangle, Link, Search, Check, Unlink } from 'lucide-react';
+import { X, MapPin, Briefcase, TreePine, Edit3, Trash2, AlertTriangle, Link, Search, Check, Unlink, UserPlus } from 'lucide-react';
 import WhatsAppIcon from '../icons/WhatsAppIcon';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -29,6 +29,7 @@ export default function MemberDrawer() {
   const closeDrawer = useUIStore(s => s.closeMemberDrawer);
   const focusPerson = useUIStore(s => s.focusPerson);
   const openEditModal = useUIStore(s => s.openEditModal);
+  const openInviteModal = useUIStore(s => s.openInviteModal);
   const addToast = useUIStore(s => s.addToast);
   const navigate = useNavigate();
 
@@ -257,6 +258,21 @@ export default function MemberDrawer() {
                     <Edit3 size={13} />
                     Edit
                   </button>
+                  {user?.role === 'creator' && selectedId !== viewerPersonId && (
+                    <button
+                      onClick={() => openInviteModal(person.name)}
+                      title={`Create login credentials for ${person.name}`}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        padding: '6px 12px', background: 'rgba(58, 117, 92, 0.18)',
+                        border: '1px solid rgba(58, 117, 92, 0.4)', borderRadius: 'var(--radius-sm)',
+                        fontSize: 12, fontWeight: 600, cursor: 'pointer', color: 'var(--color-sage-highlight)',
+                      }}
+                    >
+                      <UserPlus size={13} />
+                      Create Login
+                    </button>
+                  )}
                   {!confirmDelete ? (
                     <button
                       onClick={() => setConfirmDelete(true)}
@@ -482,6 +498,29 @@ export default function MemberDrawer() {
                       }}
                     >
                       👤 This is you — the root of your family tree.
+                    </div>
+                  )}
+
+                  {/* Create Login for Relative Banner */}
+                  {user?.role === 'creator' && selectedId !== viewerPersonId && (
+                    <div style={{ padding: '14px 16px', background: 'var(--surface-1)', border: '1px solid var(--surface-2)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-cream)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <UserPlus size={15} color="var(--color-sage-highlight)" />
+                          <span>Login Account for {person.name.split(' ')[0]}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: 'var(--color-warm-gray)', marginTop: 3 }}>
+                          Generate login credentials so they can sign in easily.
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => openInviteModal(person.name)}
+                        className="btn-secondary"
+                        style={{ padding: '6px 12px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, color: 'var(--color-sage-highlight)', borderColor: 'rgba(58, 117, 92, 0.4)', background: 'rgba(58, 117, 92, 0.1)' }}
+                      >
+                        <UserPlus size={13} />
+                        <span>Set Up Login</span>
+                      </button>
                     </div>
                   )}
                 </div>

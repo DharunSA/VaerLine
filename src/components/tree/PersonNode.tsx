@@ -169,28 +169,45 @@ const PersonNode = memo(({ data, selected }: NodeProps) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {/* Avatar */}
           {person.photoUrl ? (
-            <img
-              src={person.photoUrl}
-              alt={person.name}
-              className="person-avatar"
-              style={{ width: 46, height: 46, flexShrink: 0, border: `2px solid ${nodeBorderColor}` }}
-              loading="lazy"
-            />
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                minWidth: 46,
+                minHeight: 46,
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: `2px solid ${nodeBorderColor}`,
+                flexShrink: 0,
+              }}
+            >
+              <img
+                src={person.photoUrl}
+                alt={person.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                loading="lazy"
+              />
+            </div>
           ) : (
             <div
               className="person-avatar-placeholder"
               style={{
                 width: 46,
                 height: 46,
+                minWidth: 46,
+                minHeight: 46,
                 background: `linear-gradient(135deg, ${nodeBorderColor}cc, ${nodeBorderColor})`,
                 flexShrink: 0,
                 fontSize: 16,
                 border: '2px solid rgba(255,255,255,0.15)',
+                borderRadius: '50%',
+                overflow: 'hidden',
               }}
             >
               {getInitials(person.name)}
             </div>
           )}
+
 
           {/* Info */}
           <div style={{ minWidth: 0, flex: 1 }}>

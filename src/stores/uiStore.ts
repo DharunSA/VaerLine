@@ -22,6 +22,13 @@ interface UIStore {
   focusPersonId: string | null;   // person to center canvas on
   collapsedBranches: Set<string>; // root IDs of collapsed branches
 
+  // Invite Relative Modal state
+  isInviteModalOpen: boolean;
+  inviteTargetName: string;
+  inviteTargetEmail: string;
+  openInviteModal: (name?: string, email?: string) => void;
+  closeInviteModal: () => void;
+
   // Toast notifications
   toasts: Toast[];
 
@@ -52,7 +59,13 @@ export const useUIStore = create<UIStore>((set, get) => ({
   searchQuery: '',
   focusPersonId: null,
   collapsedBranches: new Set(),
+  isInviteModalOpen: false,
+  inviteTargetName: '',
+  inviteTargetEmail: '',
   toasts: [],
+
+  openInviteModal: (name = '', email = '') => set({ isInviteModalOpen: true, inviteTargetName: name, inviteTargetEmail: email }),
+  closeInviteModal: () => set({ isInviteModalOpen: false, inviteTargetName: '', inviteTargetEmail: '' }),
 
   openMemberDrawer: () => set({ isMemberDrawerOpen: true }),
   closeMemberDrawer: () => set({ isMemberDrawerOpen: false }),

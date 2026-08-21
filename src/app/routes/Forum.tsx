@@ -52,11 +52,12 @@ export default function Forum() {
   const openDetailDrawer = useForumStore(s => s.openDetailDrawer);
   const togglePostUpvote = useForumStore(s => s.togglePostUpvote);
   const people = usePeopleStore(s => s.people);
+  const treeId = usePeopleStore(s => s.treeId);
   const user = useAuthStore(s => s.user);
 
   useEffect(() => {
-    fetchPosts(user?.id);
-  }, [fetchPosts, user?.id]);
+    fetchPosts(user?.id, treeId || undefined);
+  }, [fetchPosts, user?.id, treeId]);
 
   // Filter and sort posts
   const filteredPosts = useMemo(() => {
