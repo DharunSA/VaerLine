@@ -104,13 +104,13 @@ export default function WhatsAppWishModal({
       const ageStr = age ? `${age}th ` : '';
 
       return {
-        heartfelt: `Dear ${personName},\n\nWishing you a very Happy ${ageStr}Birthday! 🎂\n\nThank you for being such a cherished ${kinship} and for all the warmth and joy you bring to our family. Wishing you good health, peace, and happiness in the year ahead.\n\nWarmly,\n${viewerName}`,
+        heartfelt: `Dear ${personName},\n\nWishing you a very Happy ${ageStr}Birthday! \uD83C\uDF82\n\nThank you for being such a cherished ${kinship} and for all the warmth and joy you bring to our family. Wishing you good health, peace, and happiness in the year ahead.\n\nWarmly,\n${viewerName}`,
         
-        traditional: `Respected ${celebration.person.name},\n\nWarmest greetings on your ${ageStr}Birthday. 🙏\n\nMay you be blessed with abundant health, long life, and prosperity. We seek your blessings and celebrate this milestone with gratitude.\n\nPranaam,\n${viewerName} & Family`,
+        traditional: `Respected ${celebration.person.name},\n\nWarmest greetings on your ${ageStr}Birthday. \uD83D\uDE4F\n\nMay you be blessed with good health, a long life, and happiness. We are grateful for you and celebrate this special day with love.\n\nWith Respect,\n${viewerName} & Family`,
         
-        playful: `Happy ${ageStr}Birthday ${personName}! 🥳🎉\n\nWishing you a wonderful day filled with celebration, laughter, and great memories. Have a great one!\n\nBest,\n${viewerName}`,
+        playful: `Happy ${ageStr}Birthday ${personName}! \uD83E\uDD73\uD83C\uDF89\n\nWishing you a wonderful day filled with celebration, laughter, and great memories. Have a great one!\n\nBest,\n${viewerName}`,
         
-        group_broadcast: `*Family Birthday Milestone*\n\nWishing *${celebration.person.name}* a very Happy ${ageStr}Birthday today! 🎉\n\nMay this year bring health, happiness, and peace.\n\n— Vaerline Family`,
+        group_broadcast: `*Happy Birthday* \uD83C\uDF89\n\nWishing *${celebration.person.name}* a very Happy ${ageStr}Birthday today!\n\nMay this year bring health, joy, and togetherness.\n\n\u2014 ${viewerName} & Family`,
       };
     } else {
       const spouseName = celebration.spouse ? celebration.spouse.name.split(' ')[0] : 'Partner';
@@ -118,13 +118,13 @@ export default function WhatsAppWishModal({
       const milestoneTitle = celebration.anniversaryMilestoneName || `${yearsStr}Wedding Anniversary`;
 
       return {
-        heartfelt: `Happy ${milestoneTitle} to ${personName} & ${spouseName}! 💐\n\nYour journey together is a beautiful inspiration to our family. Wishing you continued love, companionship, and shared joy in all the years to come.\n\nWith love,\n${viewerName}`,
+        heartfelt: `Happy ${milestoneTitle} to ${personName} & ${spouseName}! 🌸\n\nYour journey together is a beautiful inspiration to our family. Wishing you continued love, togetherness, and joy in all the years to come.\n\nWith love,\n${viewerName}`,
         
-        traditional: `Heartiest Congratulations to ${celebration.person.name} & ${celebration.spouse?.name || ''} on your ${milestoneTitle}. 🙏\n\nMay your bond be blessed with enduring happiness, peace, and health.\n\nPranaam,\n${viewerName} & Family`,
+        traditional: `Heartiest Congratulations to ${celebration.person.name} & ${celebration.spouse?.name || ''} on your ${milestoneTitle}. 🙏\n\nMay your bond be blessed with lasting happiness, peace, and good health.\n\nWith Respect,\n${viewerName} & Family`,
         
-        playful: `Happy ${yearsStr}Anniversary to ${personName} & ${spouseName}! 🥂✨\n\nHere’s to celebrating many more wonderful chapters together!\n\nCheers,\n${viewerName}`,
+        playful: `Happy ${yearsStr}Anniversary to ${personName} & ${spouseName}! 🥂✨\n\nHere's to celebrating many more wonderful years together!\n\nCheers,\n${viewerName}`,
         
-        group_broadcast: `*Family Wedding Anniversary*\n\nHeartiest Congratulations to *${celebration.person.name} & ${celebration.spouse?.name || ''}* on their *${milestoneTitle}* today! 💐✨\n\n— Vaerline Family`,
+        group_broadcast: `*Happy Anniversary* 🌸\n\nHeartiest wishes to *${celebration.person.name} & ${celebration.spouse?.name || ''}* on their *${milestoneTitle}* today!\n\n— ${viewerName} & Family`,
       };
     }
   }, [celebration, viewer, kinshipLabel]);
@@ -154,7 +154,14 @@ export default function WhatsAppWishModal({
 
   const handleSendWhatsApp = () => {
     const cleaned = cleanPhoneNumber(phoneNumber);
-    const encoded = encodeURIComponent(customMessage);
+    // WhatsApp requires emoji to be passed as raw Unicode, NOT as percent-encoded UTF-8 bytes.
+    // encodeURIComponent() converts emoji surrogate pairs into %F0%9F... sequences which
+    // WhatsApp Web/App re-decodes incorrectly on some devices, showing diamond ◆ characters.
+    // Fix: encode the text but then decode percent-encoded emoji back to raw Unicode.
+    const encoded = encodeURIComponent(customMessage).replace(
+      /%([EF][0-9A-F]%[89AB][0-9A-F]%[89AB][0-9A-F]|[EF][0-9A-F]%[89AB][0-9A-F]|[CD][0-9A-F]%[89AB][0-9A-F]|F[0-9A-F]%[89AB][0-9A-F]%[89AB][0-9A-F]%[89AB][0-9A-F])/gi,
+      match => decodeURIComponent(match)
+    );
     const url = cleaned
       ? `https://wa.me/${cleaned}?text=${encoded}`
       : `https://wa.me/?text=${encoded}`;

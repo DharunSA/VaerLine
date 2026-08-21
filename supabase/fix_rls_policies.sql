@@ -54,7 +54,14 @@ create policy "Allow all on forum_votes" on forum_votes for all using (true) wit
 -- Ensure 1 vote per user per post
 create unique index if not exists idx_forum_votes_unique_user_post on forum_votes (user_id, post_id) where comment_id is null;
 
--- 5. Update Dharun SA DOB to 12-08-2001 (2001-08-12)
+-- 5. Tree Members Table Policies
+drop policy if exists "Owner can manage tree members" on tree_members;
+drop policy if exists "Members can view own memberships" on tree_members;
+drop policy if exists "Allow all on tree_members" on tree_members;
+
+create policy "Allow all on tree_members" on tree_members for all using (true) with check (true);
+
+-- 6. Update Dharun SA DOB to 12-08-2001 (2001-08-12)
 update people
 set dob = '2001-08-12'
 where id = '10000000-0000-0000-0000-000000000005';

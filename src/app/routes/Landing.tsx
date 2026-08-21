@@ -4,9 +4,6 @@ import {
   ArrowRight, 
   MessageSquare, 
   Sparkles, 
-  ShieldCheck, 
-  Database, 
-  CloudCheck, 
   TreePine,
   CheckCircle2
 } from 'lucide-react';
@@ -77,7 +74,7 @@ export default function Landing() {
           <a href="#canvas" className="stitch-nav-link">Ancestry</a>
           <a href="#forum" className="stitch-nav-link">Family Forum</a>
           <a href="#milestones" className="stitch-nav-link">Milestones</a>
-          <a href="#ai" className="stitch-nav-link">AI Narratives</a>
+          <a href="#narratives" className="stitch-nav-link">Biographies</a>
         </nav>
 
         {/* CTAs */}
@@ -135,7 +132,7 @@ export default function Landing() {
             {/* Pill Tag */}
             <div className="stitch-pill-badge" style={{ marginBottom: 24 }}>
               <Sparkles size={13} />
-              <span>Digital Heritage & Kinship Engine</span>
+              <span>Digital Family Heritage Archive</span>
             </div>
 
             {/* Display Title */}
@@ -165,7 +162,7 @@ export default function Landing() {
                 fontWeight: 400,
               }}
             >
-              Weave the threads of your lineage into a timeless digital tapestry. Cloud-powered mapping, secure archival, and beautifully crafted narratives for generations to come.
+              Weave the threads of your lineage into a timeless digital tapestry. Connect with relatives, celebrate milestones, and preserve cherished memories for generations to come.
             </p>
 
             {/* Action Buttons */}
@@ -230,45 +227,20 @@ export default function Landing() {
                     position: 'absolute',
                     bottom: 20,
                     left: 24,
-                    right: 24,
-                    display: 'flex',
-                    justifyContent: 'space-between',
+                    display: 'inline-flex',
                     alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: 12,
+                    gap: 10,
+                    background: 'rgba(12, 14, 16, 0.85)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                    backdropFilter: 'blur(12px)',
+                    padding: '8px 18px',
+                    borderRadius: 9999,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#25D366', boxShadow: '0 0 10px #25D366' }} />
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#FAF7F2', letterSpacing: '0.02em' }}>
-                      Interactive Live Canvas • 100% Cloud Synchronized
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => navigate('/tree')}
-                    style={{
-                      background: 'rgba(18, 20, 22, 0.85)',
-                      color: '#F2CA50',
-                      border: '1px solid rgba(212, 175, 55, 0.4)',
-                      borderRadius: 9999,
-                      padding: '7px 18px',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      backdropFilter: 'blur(10px)',
-                      transition: 'all 150ms',
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = '#F2CA50';
-                      e.currentTarget.style.color = '#121416';
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = 'rgba(18, 20, 22, 0.85)';
-                      e.currentTarget.style.color = '#F2CA50';
-                    }}
-                  >
-                    Launch Full Canvas →
-                  </button>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#25D366', boxShadow: '0 0 10px #25D366' }} />
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#FAF7F2', letterSpacing: '0.02em' }}>
+                    Interactive Family Tree Canvas
+                  </span>
                 </div>
               </div>
             </div>
@@ -282,7 +254,7 @@ export default function Landing() {
               The Digital Heritage Suite
             </h2>
             <p style={{ color: '#A0AEC0', fontSize: 16, margin: 0, fontWeight: 400 }}>
-              Architected with reverence for ancestral roots and precision engineering for the future.
+              Everything your family needs to build, explore, and preserve your lineage together.
             </p>
           </div>
 
@@ -292,23 +264,20 @@ export default function Landing() {
               className="stitch-glass-card stitch-bento-card-span2"
               style={{ padding: 36, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden', minHeight: 320 }}
             >
-              <div style={{ position: 'relative', zIndex: 2, maxWidth: 440 }}>
+              <div style={{ position: 'relative', zIndex: 2, maxWidth: 460 }}>
                 <span className="stitch-pill-badge" style={{ marginBottom: 16 }}>
                   Discovery
                 </span>
                 <h3 className="stitch-display-font" style={{ fontSize: 26, fontWeight: 600, color: '#FAF7F2', margin: '0 0 10px' }}>
                   Interactive Lineage Canvas
                 </h3>
-                <p style={{ color: '#A0AEC0', fontSize: 15, lineHeight: 1.6, margin: '0 0 20px' }}>
-                  Trace roots with fluid Dagre-layered graph layouts. Calculate kinship degrees dynamically from any viewer perspective.
+                <p style={{ color: '#A0AEC0', fontSize: 15, lineHeight: 1.6, margin: '0 0 24px' }}>
+                  Trace ancestral roots with fluid, auto-arranging family layouts. Seamlessly discover connections and calculate relationships across generations.
                 </p>
-                <button
-                  onClick={() => navigate('/tree')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#F2CA50', background: 'none', border: 'none', fontSize: 14, fontWeight: 600, cursor: 'pointer', padding: 0 }}
-                >
-                  <span>Explore Canvas</span>
-                  <ArrowRight size={16} />
-                </button>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 600, color: '#F2CA50', background: 'rgba(212, 175, 55, 0.12)', border: '1px solid rgba(212, 175, 55, 0.3)', padding: '6px 14px', borderRadius: 8, width: 'fit-content' }}>
+                  <TreePine size={14} />
+                  <span>Dynamic Kinship Graphing</span>
+                </div>
               </div>
 
               {/* Faded Background Art */}
@@ -330,37 +299,18 @@ export default function Landing() {
                 <h3 className="stitch-display-font" style={{ fontSize: 22, fontWeight: 600, color: '#FAF7F2', margin: '0 0 10px' }}>
                   Family Forum
                 </h3>
-                <p style={{ color: '#A0AEC0', fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-                  Threaded discussions to share heirloom photos, debate historical findings, and connect relatives globally.
+                <p style={{ color: '#A0AEC0', fontSize: 14, lineHeight: 1.6, margin: '0 0 24px' }}>
+                  Threaded discussions to share heirloom photos, preserve family lore, and stay connected with relatives near and far.
                 </p>
               </div>
 
-              <button
-                onClick={() => navigate('/forum')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(212, 175, 55, 0.3)',
-                  borderRadius: 12,
-                  padding: '10px 16px',
-                  color: '#F2CA50',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  marginTop: 20,
-                  transition: 'background 150ms',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)')}
-              >
-                <span>Open Discussions</span>
-                <ArrowRight size={14} />
-              </button>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 600, color: '#F2CA50', background: 'rgba(212, 175, 55, 0.12)', border: '1px solid rgba(212, 175, 55, 0.3)', padding: '6px 14px', borderRadius: 8, width: 'fit-content' }}>
+                <CheckCircle2 size={14} />
+                <span>Threaded Community Discussions</span>
+              </div>
             </div>
 
-            {/* 3. Milestone Engine */}
+            {/* 3. Milestone Reminders */}
             <div
               id="milestones"
               className="stitch-glass-card"
@@ -371,10 +321,10 @@ export default function Landing() {
                   <WhatsAppIcon size={22} color="#25D366" />
                 </div>
                 <h3 className="stitch-display-font" style={{ fontSize: 22, fontWeight: 600, color: '#FAF7F2', margin: '0 0 10px' }}>
-                  Milestone Engine
+                  Milestone Reminders
                 </h3>
-                <p style={{ color: '#A0AEC0', fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-                  Rolling 35-day birthday and anniversary scanner with 1-click tailored greetings delivered via WhatsApp.
+                <p style={{ color: '#A0AEC0', fontSize: 14, lineHeight: 1.6, margin: '0 0 24px' }}>
+                  Never miss a special moment. Receive upcoming alerts for family birthdays and anniversaries with one-tap WhatsApp greetings.
                 </p>
               </div>
 
@@ -384,85 +334,27 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* 4. AI Heritage Narratives */}
+            {/* 4. Ancestral Biographies & Records */}
             <div
-              id="ai"
+              id="narratives"
               className="stitch-glass-card stitch-bento-card-span2"
               style={{ padding: 36, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 320 }}
             >
               <div style={{ maxWidth: 500 }}>
                 <span className="stitch-pill-badge" style={{ marginBottom: 16 }}>
-                  AI Powered
+                  Archival Chronicles
                 </span>
                 <h3 className="stitch-display-font" style={{ fontSize: 26, fontWeight: 600, color: '#FAF7F2', margin: '0 0 10px' }}>
-                  AI Heritage Narratives
+                  Ancestral Biographies
                 </h3>
                 <p style={{ color: '#A0AEC0', fontSize: 15, lineHeight: 1.6, margin: '0 0 24px' }}>
-                  Transform dry dates into rich ancestral biographies. Our lineage generator synthesizes historical milestones to bring your family stories to life.
+                  Preserve life stories, historical milestones, and personal memories for each family member in a lasting digital record.
                 </p>
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className="stitch-btn-primary"
-                  style={{ padding: '10px 24px', fontSize: 14 }}
-                >
-                  <Sparkles size={16} />
-                  <span>Generate Family Story</span>
-                </button>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 600, color: '#F2CA50', background: 'rgba(212, 175, 55, 0.12)', border: '1px solid rgba(212, 175, 55, 0.3)', padding: '6px 14px', borderRadius: 8, width: 'fit-content' }}>
+                  <TreePine size={14} />
+                  <span>Comprehensive Heritage Profiles</span>
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ─── Social Proof / Testimonial ─────────────────────────────────── */}
-        <section style={{ maxWidth: 1000, margin: '0 auto 100px', padding: '0 24px' }}>
-          {/* Badges */}
-          <div
-            style={{
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-              padding: '24px 0',
-              marginBottom: 48,
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 40,
-              flexWrap: 'wrap',
-              color: '#A0AEC0',
-              fontSize: 14,
-              fontWeight: 500,
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Database size={17} color="#F2CA50" />
-              <span>Supabase Cloud Sync</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <ShieldCheck size={17} color="#F2CA50" />
-              <span>Row-Level Security</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <CloudCheck size={17} color="#F2CA50" />
-              <span>Instant Cloud Redundancy</span>
-            </div>
-          </div>
-
-          {/* Quote */}
-          <div className="stitch-glass-card" style={{ padding: '40px 48px' }}>
-            <span style={{ fontSize: 40, color: '#F2CA50', display: 'block', lineHeight: 1, marginBottom: 12 }}>“</span>
-            <p
-              className="font-serif"
-              style={{
-                fontSize: 'clamp(20px, 3vw, 26px)',
-                color: '#FAF7F2',
-                lineHeight: 1.4,
-                margin: '0 0 24px',
-                fontStyle: 'italic',
-              }}
-            >
-              VaerLine didn’t just help us map our family tree; it gave us a beautifully designed, secure place to truly connect with our roots. It feels like a private digital museum for our heritage.
-            </p>
-            <div>
-              <div style={{ fontWeight: 600, color: '#ffffff', fontSize: 16 }}>Eleanor Vance</div>
-              <div style={{ color: '#A0AEC0', fontSize: 13 }}>Family Historian & Archivist</div>
             </div>
           </div>
         </section>
@@ -481,7 +373,7 @@ export default function Landing() {
               Begin Your Family's Archive Today
             </h2>
             <p style={{ color: '#A0AEC0', fontSize: 16, maxWidth: 540, margin: '0 auto 30px', fontWeight: 400 }}>
-              Join thousands preserving their ancestry with beautiful visual genealogies and cloud permanence.
+              Join thousands preserving their ancestry with beautiful visual genealogies and private archival storage.
             </p>
             <button onClick={handleStart} className="stitch-btn-primary" style={{ padding: '14px 36px', fontSize: 15 }}>
               <span>{session ? 'Return to Dashboard' : 'Create Free Heritage Account'}</span>

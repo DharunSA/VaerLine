@@ -17,9 +17,16 @@ import AddMemberModal from '../components/member/AddMemberModal';
 import MemberDrawer from '../components/member/MemberDrawer';
 import ToastContainer from '../components/ui/ToastContainer';
 import AuthModal from '../components/auth/AuthModal';
+import InviteMemberModal from '../components/auth/InviteMemberModal';
 import UserMenu from '../components/auth/UserMenu';
 import { useUIStore } from '../stores/uiStore';
 import { useAuthStore } from '../stores/authStore';
+
+function InviteMemberModalGlobal() {
+  const isInviteModalOpen = useUIStore(s => s.isInviteModalOpen);
+  const closeInviteModal = useUIStore(s => s.closeInviteModal);
+  return <InviteMemberModal isOpen={isInviteModalOpen} onClose={closeInviteModal} />;
+}
 
 
 import '../styles/globals.css';
@@ -254,6 +261,7 @@ function AppLayout() {
       <MemberDrawer />
       <ToastContainer />
       <AuthModal />
+      <InviteMemberModalGlobal />
     </>
   );
 }

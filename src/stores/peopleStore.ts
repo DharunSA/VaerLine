@@ -456,7 +456,41 @@ export const usePeopleStore = create<PeopleStore>((set, get) => ({
         const activeTreeId = userTrees[0].id;
         await get().fetchTree(activeTreeId);
       } else {
-        // Brand new user: Create a private tree and root person in Supabase
+        // 3. Fallback: Search for an existing Person in Supabase matching this user's name
+        const cleanName = userName?.trim().toLowerCase();
+        if (cleanName && cleanName !== 'family creator') {
+          const { data: matchingPeople } = await supabase
+            .from('people')
+            .select('id, tree_id, name')
+            .ilike('name', `%${userName?.trim()}%`)
+            .limit(5);
+
+          if (matchingPeople && matchingPeople.length > 0) {
+            const matchedPerson = matchingPeople.find(
+              p => p.name.trim().toLowerCase() === cleanName || p.name.trim().toLowerCase().startsWith(cleanName)
+            ) || matchingPeople[0];
+
+            console.log('[Vaerline Cloud] Matched relative user with existing person node:', matchedPerson);
+
+            // Save membership so future lookups are instant
+            try {
+              await supabase.from('tree_members').insert({
+                tree_id: matchedPerson.tree_id,
+                user_id: userId,
+                role: 'member',
+              });
+            } catch (mErr) {
+              console.warn('[Vaerline Cloud] Auto-linking tree_members notice:', mErr);
+            }
+
+            // Load the existing family tree and select their profile card
+            await get().fetchTree(matchedPerson.tree_id);
+            set({ selectedPersonId: matchedPerson.id });
+            return;
+          }
+        }
+
+        // 4. Brand new user with no existing family profile: Create a private tree & root person
         const activeTreeId = uuidv4();
         const rootPersonId = uuidv4();
         const displayName = userName && userName.trim() !== '' ? userName : 'Family Creator';

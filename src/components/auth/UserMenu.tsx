@@ -3,6 +3,7 @@ import { User, LogOut, ChevronDown, CheckCircle2, AlertCircle, Shield, Settings,
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import { useUIStore } from '../../stores/uiStore';
 import InviteMemberModal from './InviteMemberModal';
 
 export default function UserMenu() {
@@ -14,6 +15,7 @@ export default function UserMenu() {
   const user = useAuthStore(s => s.user);
   const signOut = useAuthStore(s => s.signOut);
   const openAuthModal = useAuthStore(s => s.openAuthModal);
+  const openInviteModal = useUIStore(s => s.openInviteModal);
 
   // Close on outside click
   useEffect(() => {
@@ -217,7 +219,7 @@ export default function UserMenu() {
                 {user.role === 'creator' && (
                   <button
                     onClick={() => {
-                      setIsInviteOpen(true);
+                      openInviteModal();
                       setIsOpen(false);
                     }}
                     style={menuItemStyle}
@@ -225,7 +227,7 @@ export default function UserMenu() {
                     onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                   >
                     <UserPlus size={14} color="var(--color-sage-highlight)" />
-                    <span>Invite a Relative</span>
+                    <span>Create Relative Login</span>
                   </button>
                 )}
 
