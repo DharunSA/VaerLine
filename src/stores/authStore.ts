@@ -138,6 +138,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
         let msg = error.message;
         if (msg.toLowerCase().includes('user already registered') || msg.toLowerCase().includes('already registered')) {
           msg = 'An account with this email address already exists. Please Sign In.';
+        } else if (msg.toLowerCase().includes('failed to fetch')) {
+          msg = 'Unable to connect to Supabase. Please ensure you have created a .env.local file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.';
         }
         set({ error: msg, isLoading: false });
         return { success: false, requiresVerification: false };
@@ -170,7 +172,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
       return { success: true, requiresVerification };
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again.';
+      let errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again.';
+      if (errorMessage.toLowerCase().includes('failed to fetch')) {
+        errorMessage = 'Unable to connect to Supabase. Please ensure you have created a .env.local file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.';
+      }
       set({ error: errorMessage, isLoading: false });
       return { success: false, requiresVerification: false };
     }
@@ -191,6 +196,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
           msg = 'Email not confirmed. Please check your inbox or spam folder for the confirmation email from Supabase, or click Resend below.';
         } else if (msg.toLowerCase().includes('invalid login credentials')) {
           msg = 'Invalid email or password. Please verify your email and password, or create a new account.';
+        } else if (msg.toLowerCase().includes('failed to fetch')) {
+          msg = 'Unable to connect to Supabase. Please ensure you have created a .env.local file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.';
         }
         set({ error: msg, isLoading: false, pendingVerificationEmail: email.trim() });
         return false;
@@ -217,7 +224,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
       }
       return false;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Invalid email or password.';
+      let errorMessage = err instanceof Error ? err.message : 'Invalid email or password.';
+      if (errorMessage.toLowerCase().includes('failed to fetch')) {
+        errorMessage = 'Unable to connect to Supabase. Please ensure you have created a .env.local file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.';
+      }
       set({ error: errorMessage, isLoading: false });
       return false;
     }
